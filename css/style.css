@@ -1,0 +1,1672 @@
+:root {
+    --primary-color: #FF6B6B;
+    --secondary-color: #4ECDC4;
+    --accent-color: #FFE66D;
+    --text-color: #2D3436;
+    --bg-color: #F7FFF7;
+    --card-bg: rgba(255, 255, 255, 0.85);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Fredoka', sans-serif;
+    color: var(--text-color);
+    background: url('../assets/images/classhall2.png') center/cover no-repeat;
+    background-color: var(--bg-color);
+    /* fallback */
+    background-attachment: fixed;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+body.page-kenali,
+body.page-protect {
+    background: url('../assets/images/2266.jpg') center/cover no-repeat;
+    background-attachment: fixed;
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 230, 109, 0.2), rgba(78, 205, 196, 0.2));
+    z-index: -1;
+}
+
+body.page-kenali .background-overlay,
+body.page-protect .background-overlay {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+.top-nav {
+    width: 100%;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    text-decoration: none;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+.btn-c1 {
+    background: var(--primary-color);
+}
+
+.btn-c2 {
+    background: var(--secondary-color);
+}
+
+.btn-c3 {
+    background: #FF9F43;
+}
+
+/* Vibrant orange */
+
+.main-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.main-menu .nav-btn {
+    font-size: 2rem;
+    padding: 20px 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    animation: float 4s ease-in-out infinite;
+}
+
+.main-menu .nav-btn:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.main-menu .nav-btn:nth-child(2) {
+    animation-delay: 1.3s;
+}
+
+.main-menu .nav-btn:nth-child(3) {
+    animation-delay: 2.6s;
+}
+
+.main-menu .nav-btn:hover {
+    animation-play-state: paused;
+    filter: brightness(1.15);
+    transform: scale(1.05) !important;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.hero {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+}
+
+.bounce-title {
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    text-shadow: 3px 3px 0px white, 5px 5px 0px rgba(0, 0, 0, 0.1);
+    animation: bounceIn 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    margin-top: 10px;
+    color: #4A4A4A;
+    font-weight: 600;
+}
+
+.content {
+    width: 100%;
+    max-width: 1000px;
+    padding: 40px 20px;
+    flex: 1;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+    justify-items: center;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 4px solid white;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 250px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    border-color: var(--secondary-color);
+}
+
+.card h2 {
+    margin-top: 15px;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+.item-icon {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    animation: float 3s ease-in-out infinite;
+}
+
+.card:nth-child(even) .item-icon {
+    animation-delay: 1.5s;
+}
+
+/* Modal */
+.hidden {
+    display: none !important;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content.glass {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 25px;
+    padding: 40px;
+    max-width: 450px;
+    text-align: center;
+    position: relative;
+    border: 5px solid var(--accent-color);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.close-btn:hover {
+    transform: scale(1.2);
+}
+
+#modal-icon {
+    font-size: 150px;
+    display: inline-block;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+}
+
+#modal-title {
+    font-size: 2.2rem;
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+}
+
+#modal-desc {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    color: #4A4A4A;
+}
+
+.action-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    font-family: inherit;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.action-btn:hover {
+    background: #ff5252;
+    transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes modalPop {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .bounce-title {
+        font-size: 2.5rem;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content.glass {
+        margin: 20px;
+        padding: 30px;
+    }
+}
+
+/* Flashlight Effect Overlay */
+.dark-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 50;
+    background: radial-gradient(circle 150px at var(--cursor-x, 50vw) var(--cursor-y, 50vh), transparent 0%, rgba(0, 0, 0, 0.98) 100%);
+}
+
+/* Scattered Items for Flashlight Minigame */
+.scatter-card {
+    position: absolute;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 10;
+}
+
+.scatter-card:hover {
+    transform: scale(1.15) !important;
+}
+
+.scatter-card i {
+    font-size: 120px;
+    line-height: 1;
+    display: inline-block;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+    animation: float 4s ease-in-out infinite;
+}
+
+/* --- CUSTOM CSS DRAWN KEYBOARD --- */
+.keyboard-main-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.20);
+    transform-origin: top left;
+    width: 1022px;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 15px;
+    margin: 0;
+    background-color: #dddddd;
+    border-radius: 20px;
+    box-shadow: 2px 3px 20px rgba(0, 0, 0, 0.4);
+    font-family: 'Open Sans', 'Fredoka', sans-serif;
+    color: #000000;
+}
+
+.keyboard-main-container .row {
+    margin: 6px 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.keyboard-main-container .col {
+    padding: 6px;
+    background-color: #eeeeee;
+    font-size: 13px;
+    text-align: center;
+    border-radius: 6px;
+    margin: 3px;
+    cursor: pointer;
+    width: 48px;
+    flex-wrap: wrap;
+    min-height: 36px;
+    display: inline-block;
+    text-transform: capitalize;
+    font-weight: 600;
+}
+
+.keyboard-main-container .col span {
+    display: block;
+}
+
+.keyboard-main-container .col.backspace,
+.keyboard-main-container .col.capsloack {
+    width: 114px;
+    text-align: left;
+}
+
+.keyboard-main-container .col.tab,
+.keyboard-main-container .col.slace {
+    width: 84px;
+    text-align: left;
+}
+
+.keyboard-main-container .col.shift,
+.keyboard-main-container .col.enter {
+    width: 120px;
+    text-align: left;
+}
+
+.keyboard-main-container .col.space {
+    width: 520px;
+}
+
+.keyboard-main-container .rightclickopt {
+    width: 14px;
+    height: 18px;
+    border: 2px solid #000000;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.keyboard-main-container .col .rightclickopt span {
+    width: 100%;
+    height: 1px;
+    background-color: #000000;
+    margin: 2px 0;
+}
+
+/* --- CUSTOM CSS DRAWN LAPTOP --- */
+.laptop-main-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.18);
+    transform-origin: top left;
+    width: 700px;
+    pointer-events: none;
+}
+
+.laptop-main-container .laptop {
+    position: relative;
+    width: 550px;
+    height: 340px;
+    margin: 0 auto;
+    background: #ddd;
+    border: 15px solid #3f3f41;
+    border-top: 20px solid #3f3f41;
+    border-radius: 14px 14px 0 0;
+    margin: 0 0 90px 0;
+    box-shadow: 0 0 0 1px #d1d2d4;
+}
+
+.laptop-main-container .laptop:before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -35px;
+    background: #d1d2d4;
+    height: 20px;
+    width: 700px;
+    border-radius: 0 0 10px 10px;
+}
+
+.laptop-main-container .laptop:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -12px;
+    width: 3px;
+    height: 3px;
+    background: #d1d2d4;
+    border-radius: 50%;
+}
+
+.laptop-main-container .base {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -25px;
+    background: #d1d2d4;
+    height: 10px;
+    width: 700px;
+}
+
+.laptop-main-container .base:before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 10px 10px;
+    height: 10px;
+    width: 80px;
+    background: #bcbdc1;
+}
+
+.laptop-main-container .base:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 20px;
+    width: 700px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0px 10px 36px -2px rgba(0, 0, 0, 0.4);
+}
+
+.laptop-main-container .screen {
+    padding-top: 150px;
+    text-align: center;
+}
+
+.laptop-main-container h1 {
+    font-family: inherit;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+    font-size: 32px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* --- CUSTOM CSS DRAWN SMARTPHONE/TABLET --- */
+.smartphone-main-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.18);
+    transform-origin: top left;
+    width: 295px;
+    pointer-events: none;
+}
+
+@keyframes SmartphoneBgAnimation {
+    0% {
+        background-position: 0% 50%
+    }
+
+    50% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0% 50%
+    }
+}
+
+.smartphone-main-container .smart {
+    margin: 0;
+    border-color: #444;
+    background-color: #333;
+    width: 295px;
+    height: 532px;
+    border-radius: 40px;
+    border: 2px solid #ddd;
+    padding: 60px 10px;
+    position: relative;
+    box-sizing: content-box;
+}
+
+.smartphone-main-container #acenzione-button {
+    background-color: #333;
+    height: 20px;
+    left: -5px;
+    top: 59px;
+    border-radius: 4px 0 0 4px;
+    width: 3px;
+    position: absolute;
+}
+
+.smartphone-main-container #volume-su {
+    height: 40px;
+    left: -7px;
+    top: 110px;
+    border-radius: 4px 0 0 4px;
+    width: 5px;
+    background: #333;
+    position: absolute;
+}
+
+.smartphone-main-container #volume-giu {
+    height: 40px;
+    left: -7px;
+    top: 155px;
+    border-radius: 4px 0 0 4px;
+    width: 5px;
+    background: #333;
+    position: absolute;
+}
+
+.smartphone-main-container #dettaglio {
+    position: absolute;
+    left: 0;
+    top: 17px;
+    width: 100%;
+}
+
+.smartphone-main-container #fotocamera {
+    background: #111;
+    height: 7px;
+    width: 7px;
+    margin: auto;
+    border-radius: 100px;
+    display: block;
+}
+
+.smartphone-main-container #sensore {
+    background: #111;
+    height: 7px;
+    width: 7px;
+    margin: 12px 100px;
+    border-radius: 100px;
+    display: block;
+}
+
+.smartphone-main-container #microfono {
+    background: #111;
+    height: 7px;
+    width: 90px;
+    margin: -19px auto 0;
+    border-radius: 100px;
+}
+
+.smartphone-main-container #schermo {
+    height: 522px;
+    width: 295px;
+    background: linear-gradient(270deg, #82c3fe, #2e74b4);
+    background-size: 400% 400%;
+    animation: SmartphoneBgAnimation 59s ease infinite;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.smartphone-main-container #bottone {
+    height: 40px;
+    width: 40px;
+    background: #111;
+    margin: 17px auto;
+    border-radius: 100px;
+}
+
+.smartphone-main-container .frame-posizione {
+    margin-left: 0px;
+    margin-right: -1px;
+    display: block;
+}
+
+.smartphone-main-container #header {
+    background: #555;
+    box-shadow: 1px 2px 7px #333;
+}
+
+.smartphone-main-container .wrap {
+    width: 960px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.smartphone-main-container #menu {
+    position: relative;
+    height: 60px;
+}
+
+.smartphone-main-container #menu ul {
+    list-style: none;
+    display: none;
+    padding: 60px;
+}
+
+.smartphone-main-container #menu ul li {
+    background: #555;
+}
+
+.smartphone-main-container #menu ul li a {
+    display: block;
+    padding: 20px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.smartphone-main-container #menu ul li a:hover {
+    background: #444;
+    color: #FFF;
+}
+
+.smartphone-main-container .three-lines-menu {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 32px;
+    display: block;
+    cursor: pointer;
+}
+
+.smartphone-main-container #menu ul.menu-responsive {
+    display: block;
+    width: 100%;
+    margin-top: 0;
+}
+
+/* --- CUSTOM CSS DRAWN MONITOR --- */
+.monitor-main-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.20);
+    transform-origin: top left;
+    width: 675px;
+    pointer-events: none;
+}
+
+.monitor-main-container article {
+    padding: 4em;
+}
+
+.monitor-main-container img {
+    width: 500px;
+}
+
+.monitor-main-container .monitor {
+    width: 515px;
+    height: 300px;
+    overflow-y: scroll;
+    border: solid 1em #333;
+    border-radius: .5em;
+    background-color: lightblue;
+}
+
+.monitor-main-container .monitor::-webkit-scrollbar {
+    width: 15px;
+}
+
+.monitor-main-container .monitor::-webkit-scrollbar-thumb {
+    background: #666;
+}
+
+.monitor-main-container .monitor::-webkit-scrollbar-track {
+    background-color: #888;
+}
+
+.monitor-main-container .stand:before {
+    content: "";
+    display: block;
+    position: relative;
+    background: #222;
+    width: 150px;
+    height: 50px;
+    top: 382px;
+    left: 185px;
+}
+
+.monitor-main-container .stand:after {
+    content: "";
+    display: block;
+    position: relative;
+    background: #333;
+    border-top-left-radius: .5em;
+    border-top-right-radius: .5em;
+    width: 300px;
+    height: 15px;
+    top: 50px;
+    left: 110px;
+}
+
+/* --- CUSTOM CSS DRAWN HEADPHONE --- */
+.headphone-main-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.30);
+    transform-origin: top left;
+    width: 400px;
+    pointer-events: none;
+}
+
+.headphone-main-container .headphones {
+    position: relative;
+    width: 350px;
+    height: 350px;
+}
+
+.headphone-main-container .head {
+    width: 300px;
+    height: 300px;
+    border-radius: 100%;
+    border: 30px solid;
+    border-color: #2D3047 #2D3047 transparent transparent;
+    transform: rotate(-45deg);
+    box-sizing: content-box;
+}
+
+.headphone-main-container .ear {
+    position: absolute;
+    width: 50px;
+    height: 150px;
+    top: 165px;
+    left: -50px;
+    border-radius: 100%;
+    border-left: 100px solid #F27059;
+    box-sizing: content-box;
+}
+
+.headphone-main-container .ear:before,
+.headphone-main-container .ear:after {
+    position: absolute;
+    content: '';
+}
+
+.headphone-main-container .ear:before {
+    width: 50px;
+    height: 150px;
+    top: 0px;
+    left: 200px;
+    border-radius: 100%;
+    border-right: 100px solid #F27059;
+    box-sizing: content-box;
+}
+
+.headphone-main-container .ear:after {
+    width: 30px;
+    height: 150px;
+    background: #2D3047;
+    border-radius: 100px;
+    box-shadow: 220px 0 0 #2D3047;
+    box-sizing: content-box;
+}
+
+/* --- CUSTOM CSS DRAWN MOUSE --- */
+.mouse-main-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.40);
+    transform-origin: top left;
+    width: 200px;
+    pointer-events: none;
+}
+
+.mouse-main-container .mouse {
+    width: 120px;
+    height: 180px;
+    background: #FF6B6B;
+    border-radius: 60px 60px 80px 80px;
+    position: relative;
+    box-shadow: inset 0 0 0 2px #d63031;
+    margin: 80px auto 0;
+}
+
+.mouse-main-container .wheel {
+    width: 12px;
+    height: 30px;
+    background: #FFE66D;
+    border-radius: 6px;
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mouse-main-container .divider {
+    width: 2px;
+    height: 70px;
+    background: #d63031;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mouse-main-container .cable {
+    width: 6px;
+    height: 80px;
+    background: #4ECDC4;
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 3px;
+}
+
+/* --- CUSTOM CSS DRAWN CAMERA --- */
+.camera-main-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.35);
+    transform-origin: top left;
+    width: 360px;
+    pointer-events: none;
+}
+
+@keyframes flash {
+    0% {
+        width: 0;
+        height: 0;
+    }
+
+    20% {
+        width: 200px;
+        height: 200px;
+    }
+
+    25% {
+        width: 0;
+        height: 0;
+    }
+
+    45% {
+        width: 200px;
+        height: 200px;
+    }
+
+    50% {
+        width: 0;
+        height: 0;
+    }
+
+    100% {
+        width: 0;
+        height: 0;
+    }
+}
+
+@keyframes camera-angle {
+    0% {
+        transform: rotate(0deg);
+        box-shadow: 0px 30px 50px -20px rgba(0, 0, 0, .7);
+    }
+
+    25% {
+        transform: rotate(2deg);
+        box-shadow: 10px 30px 50px -20px rgba(0, 0, 0, .7);
+    }
+
+    75% {
+        transform: rotate(-2deg);
+        box-shadow: -10px 30px 50px -20px rgba(0, 0, 0, .7);
+    }
+
+    100% {
+        transform: rotate(0deg);
+        box-shadow: 0px 30px 50px -20px rgba(0, 0, 0, .7);
+    }
+}
+
+.camera-main-container .camera-body {
+    position: relative;
+    border-radius: 5px;
+    box-shadow: 0px 30px 50px -20px rgba(0, 0, 0, .7);
+    animation: 5s camera-angle infinite;
+}
+
+.camera-main-container .camera-top,
+.camera-main-container .camera-mid,
+.camera-main-container .camera-bottom {
+    width: 360px;
+    box-sizing: border-box;
+}
+
+.camera-main-container .camera-top {
+    position: relative;
+    height: 60px;
+    background: linear-gradient(to right, rgba(226, 226, 226, 1) 0%, rgba(245, 245, 245, 1) 10%, rgba(245, 245, 245, 1) 90%, rgba(226, 226, 226, 1) 100%);
+    border: 1px solid #DCDCDC;
+    border-top-left-radius: 5px;
+}
+
+.camera-main-container .camera-top:before {
+    display: block;
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: 0;
+    width: 210px;
+    height: 20px;
+    background: linear-gradient(to right, rgba(245, 245, 245, 1) 0%, rgba(245, 245, 245, 1) 174px, rgba(226, 226, 226, 1) 100%);
+    border: 1px solid #DCDCDC;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom: none;
+    box-shadow: inset 0 15px 15px -15px #FDFDFD;
+    box-sizing: border-box;
+}
+
+.camera-main-container .zoom {
+    position: absolute;
+    top: -15px;
+    left: 30px;
+    width: 42px;
+    height: 9px;
+    background: linear-gradient(to right, rgba(176, 176, 176, 1) 0%, rgba(226, 226, 226, 1) 30%, rgba(226, 226, 226, 1) 50%, rgba(226, 226, 226, 1) 70%, rgba(176, 176, 176, 1) 100%);
+    border: 1px solid #A3A3A3;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    box-shadow: inset 0 15px 15px -15px #FDFDFD;
+    box-sizing: border-box;
+}
+
+.camera-main-container .zoom:before {
+    display: block;
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 4px;
+    background: linear-gradient(to right, rgba(176, 176, 176, 1) 0%, rgba(226, 226, 226, 1) 50%, rgba(176, 176, 176, 1) 100%);
+    border: 1px solid #A3A3A3;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    box-sizing: border-box;
+}
+
+.camera-main-container .zoom:after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 46px;
+    height: 4px;
+    background: linear-gradient(to right, rgba(176, 176, 176, 1) 0%, rgba(226, 226, 226, 1) 30%, rgba(226, 226, 226, 1) 50%, rgba(226, 226, 226, 1) 70%, rgba(176, 176, 176, 1) 100%);
+    border: 1px solid #A3A3A3;
+    border-bottom: none;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    box-sizing: border-box;
+}
+
+.camera-main-container .mode-changer {
+    position: absolute;
+    top: -20px;
+    left: 82px;
+    width: 60px;
+    height: 16px;
+    background: linear-gradient(to right, rgba(176, 176, 176, 1) 0%, rgba(226, 226, 226, 1) 30%, rgba(226, 226, 226, 1) 50%, rgba(226, 226, 226, 1) 70%, rgba(176, 176, 176, 1) 100%);
+    border: 1px solid #A3A3A3;
+    border-radius: 3px;
+    box-shadow: inset 0 15px 15px -15px #FDFDFD;
+    box-sizing: border-box;
+}
+
+.camera-main-container .mode-changer:after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(to right, rgba(176, 176, 176, 1) 0%, rgba(226, 226, 226, 1) 30%, rgba(226, 226, 226, 1) 50%, rgba(226, 226, 226, 1) 70%, rgba(176, 176, 176, 1) 100%);
+    border: 1px solid #A3A3A3;
+    border-bottom: none;
+    box-sizing: border-box;
+}
+
+.camera-main-container .sides {
+    width: 100%;
+}
+
+.camera-main-container .sides:before,
+.camera-main-container .sides:after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 24px;
+    width: 8px;
+    height: 30px;
+    background: linear-gradient(to bottom, rgba(130, 129, 129, 1) 0%, rgba(105, 103, 103, 1) 10%, rgba(79, 77, 77, 1) 50%, rgba(64, 62, 63, 1) 100%);
+    border: 1px solid #3E3C3D;
+    border-radius: 2px;
+    box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, .5);
+    box-sizing: border-box;
+}
+
+.camera-main-container .sides:before {
+    left: -4px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.camera-main-container .sides:after {
+    right: -4px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.camera-main-container .range-finder {
+    position: absolute;
+    top: 10px;
+    left: 105px;
+    width: 30px;
+    height: 20px;
+    background: #3E3C3D;
+    border-radius: 3px;
+    box-shadow: inset 0 0 5px 3px #333132;
+    box-sizing: border-box;
+}
+
+.camera-main-container .range-finder:before {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background: #797878;
+    border-radius: 100%;
+}
+
+.camera-main-container .focus {
+    position: absolute;
+    top: -14px;
+    left: 156px;
+    width: 15px;
+    height: 15px;
+    background: #3F3D3E;
+    border-radius: 100%;
+    box-shadow: inset 0 0 4px 3px #2D2B2B, inset 0 4px 5px 0 #F5F5F5, inset 0 -3px 4px -2px #A3A2A2;
+    box-sizing: border-box;
+}
+
+.camera-main-container .red {
+    position: absolute;
+    top: 5px;
+    left: 165px;
+    width: 30px;
+    height: 30px;
+    background: #DC2839;
+    border-radius: 100%;
+}
+
+.camera-main-container .view-finder {
+    position: absolute;
+    left: 210px;
+    top: 10px;
+    width: 48px;
+    height: 30px;
+    background: radial-gradient(ellipse at center, rgba(130, 129, 129, 1) 0%, rgba(64, 62, 63, 1) 85%, rgba(64, 62, 63, 1) 100%);
+    border: 3px solid #312F2F;
+    border-radius: 4px;
+    box-shadow: inset 0 8px 8px -8px #FDFDFD;
+    box-sizing: border-box;
+}
+
+.camera-main-container .flash {
+    position: absolute;
+    top: -6px;
+    right: 20px;
+    width: 58px;
+    height: 46px;
+    background: radial-gradient(ellipse at center, rgba(130, 129, 129, 1) 0%, rgba(64, 62, 63, 1) 70%, rgba(64, 62, 63, 1) 100%);
+    border: 2px solid #312F2F;
+    border-radius: 3px;
+    box-shadow: inset 0 8px 8px -8px #FDFDFD;
+    box-sizing: border-box;
+}
+
+.camera-main-container .flash:before,
+.camera-main-container .flash:after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.camera-main-container .flash:before {
+    width: 90%;
+    height: 70%;
+    background: radial-gradient(ellipse at center, rgba(105, 103, 103, 1) 0%, rgba(30, 30, 30, 1) 50%, rgba(30, 30, 30, 1) 100%);
+}
+
+.camera-main-container .flash:after {
+    width: 16px;
+    height: 14px;
+    background: #797979;
+    border-radius: 8px 2px;
+}
+
+.camera-main-container .flash .light {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 100%;
+    z-index: 2;
+    animation: 1s flash infinite;
+}
+
+.camera-main-container .camera-mid {
+    position: relative;
+    height: 130px;
+    background: linear-gradient(to right, rgba(228, 228, 228, 1) 0%, rgba(250, 250, 250, 1) 10%, rgba(250, 250, 250, 1) 90%, rgba(228, 228, 228, 1) 100%);
+    border: 1px solid #DCDCDC;
+    border-top: none;
+    border-bottom: none;
+    box-shadow: inset 0 15px 15px -15px #FDFDFD;
+    box-sizing: border-box;
+}
+
+.camera-main-container .camera-mid .sensor {
+    position: absolute;
+    top: 40px;
+    left: 105px;
+    width: 30px;
+    height: 30px;
+    background: #545252;
+    border: 2px solid #545252;
+    border-radius: 100%;
+    box-shadow: inset 0 12px 12px -10px #FDFDFD, 0 2px 5px 1px rgba(0, 0, 0, .3);
+    box-sizing: border-box;
+}
+
+.camera-main-container .camera-mid .sensor:before,
+.camera-main-container .camera-mid .sensor:after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.camera-main-container .camera-mid .sensor:before {
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(to bottom, #E9E9E9 0%, #BDBDBD 100%);
+    border-radius: 100%;
+}
+
+.camera-main-container .camera-mid .sensor:after {
+    width: 12px;
+    height: 12px;
+    background: #FAFAFA;
+    border-radius: 100%;
+    box-shadow: 0 2px 3px 0 #747474;
+}
+
+.camera-main-container .camera-mid .lens {
+    position: absolute;
+    top: -20px;
+    left: 130px;
+    width: 155px;
+    height: 155px;
+    background: radial-gradient(ellipse at center, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 15%, rgb(39, 37, 37) 30%, rgb(64, 62, 63) 30%, rgb(64, 62, 63) 31%, rgb(64, 62, 63) 40%, rgb(233, 235, 236) 41%, rgb(233, 235, 236) 44%, rgb(176, 177, 178) 48%, rgb(232, 233, 234) 50%, rgb(232, 233, 234) 60%, rgb(247, 248, 248) 60%, rgb(120, 121, 121) 65%, rgb(255, 255, 255) 66%, rgb(255, 255, 255) 100%);
+    border: 1px solid #B6B7B8;
+    border-radius: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 7px 15px -2px rgba(0, 0, 0, .4), inset 0 -2px 15px -2px rgba(0, 0, 0, .2), inset 0 7px 15px -2px #FFF;
+}
+
+.camera-main-container .camera-mid .lens:before {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 25px;
+    height: 25px;
+    background: rgba(0, 0, 0, .7);
+    border-radius: 100%;
+    box-shadow: inset 0 5px 3px -2px rgba(255, 255, 255, .5), inset 0 -5px 20px -8px rgba(255, 255, 255, .5);
+}
+
+.camera-main-container .camera-bottom {
+    height: 16px;
+    background: linear-gradient(to right, rgba(226, 226, 226, 1) 0%, rgba(245, 245, 245, 1) 10%, rgba(245, 245, 245, 1) 90%, rgba(226, 226, 226, 1) 100%);
+    border: 1px solid #DCDCDC;
+    border-bottom: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    box-shadow: inset 0 15px 15px -15px #FDFDFD, inset 0 -12px 12px -10px #797979;
+    box-sizing: border-box;
+}
+
+/* --- CUSTOM CSS DRAWN SPEAKER --- */
+.speaker-main-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.45);
+    transform-origin: top left;
+    width: 200px;
+    pointer-events: none;
+}
+
+.speaker-main-container .speaker {
+    width: 140px;
+    height: 260px;
+    background: linear-gradient(180deg, #333, #1a1a1a);
+    border-radius: 14px;
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.4);
+    padding: 14px;
+    box-sizing: content-box;
+}
+
+.speaker-main-container .tweeter {
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, #666, #111);
+    border-radius: 50%;
+    margin: 10px auto;
+    box-shadow: inset 0 0 6px #000;
+}
+
+.speaker-main-container .woofer {
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle, #777, #111);
+    border-radius: 50%;
+    margin: 20px auto;
+    box-shadow: inset 0 0 10px #000;
+}
+
+.speaker-main-container .port {
+    width: 40px;
+    height: 10px;
+    background: #000;
+    border-radius: 6px;
+    margin: 18px auto 0;
+}
+
+/* --- CUSTOM CSS DRAWN JOYSTICK --- */
+.joystick-main-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(0.20);
+    transform-origin: top left;
+    width: 650px;
+    pointer-events: none;
+}
+
+.joystick-main-container .controller {
+    margin-top: 100px;
+    margin-left: 125px;
+    height: 200px;
+    width: 400px;
+    background-color: #E6E6E6;
+    position: relative;
+    box-shadow: 15px 15px 15px rgba(0, 0, 0, 0.2);
+}
+
+.joystick-main-container .controllerLeft {
+    height: 250px;
+    width: 250px;
+    background-color: #E6E6E6;
+    position: absolute;
+    top: -25px;
+    left: 0;
+    border-radius: 100%;
+    margin-left: -125px;
+    box-shadow: -15px 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.joystick-main-container .controllerRight {
+    height: 250px;
+    width: 250px;
+    background-color: #B8B8B8;
+    position: absolute;
+    top: -25px;
+    right: 0;
+    border-radius: 100%;
+    margin-right: -125px;
+    border: solid 15px rgba(230, 230, 230, 1);
+    box-shadow: 15px 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.joystick-main-container .circle {
+    height: 150px;
+    width: 150px;
+    background-color: #E6E6E6;
+    position: absolute;
+    border-radius: 100%;
+    border: solid 5px rgba(184, 184, 184, 1);
+    margin-left: 42px;
+    margin-top: 52px;
+}
+
+.joystick-main-container .crossCenter {
+    background-color: #333333;
+    width: 35px;
+    height: 35px;
+    margin-top: 110px;
+    margin-left: 100px;
+    position: relative;
+}
+
+.joystick-main-container .crossCircle {
+    background-color: #292929;
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    border-radius: 100%;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+.joystick-main-container .crossTop {
+    background-color: #333333;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    border-radius: 15%;
+    margin-top: -30px;
+}
+
+.joystick-main-container .crossBottom {
+    background-color: #333333;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    border-radius: 15%;
+    margin-top: 30px;
+}
+
+.joystick-main-container .crossLeft {
+    background-color: #333333;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    border-radius: 15%;
+    margin-left: -30px;
+}
+
+.joystick-main-container .crossRight {
+    background-color: #333333;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    border-radius: 15%;
+    margin-left: 30px;
+}
+
+.joystick-main-container .centerBlue {
+    position: absolute;
+    width: 50px;
+    height: 20px;
+    margin-left: 175px;
+    margin-top: 30px;
+    background-color: #0099FF;
+}
+
+.joystick-main-container .centerLeft {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    margin-left: -10px;
+    margin-top: 0px;
+    background-color: #0099FF;
+    border-radius: 100%;
+}
+
+.joystick-main-container .centerRight {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    margin-left: 40px;
+    margin-top: 0px;
+    background-color: #0099FF;
+    border-radius: 100%;
+}
+
+.joystick-main-container .backButton1Center {
+    position: absolute;
+    width: 80px;
+    height: 50px;
+    background-color: #E6E6E6;
+    transform: rotate(-30deg);
+    margin-top: 60px;
+    margin-left: 45px;
+}
+
+.joystick-main-container .backButton2Center {
+    position: absolute;
+    width: 80px;
+    height: 50px;
+    background-color: #E6E6E6;
+    transform: rotate(-30deg);
+    margin-top: 115px;
+    margin-left: 90px;
+}
+
+.joystick-main-container .cornerLeft1 {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: #00B800;
+    border-radius: 100%;
+    margin-left: -20px;
+    border: solid 5px rgba(230, 230, 230, 1);
+}
+
+.joystick-main-container .cornerRight1 {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: #6699FF;
+    border-radius: 100%;
+    margin-left: 60px;
+    border: solid 5px rgba(230, 230, 230, 1);
+}
+
+.joystick-main-container .cornerLeft2 {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: #CFCF00;
+    border-radius: 100%;
+    margin-left: -20px;
+    border: solid 5px rgba(230, 230, 230, 1);
+}
+
+.joystick-main-container .cornerRight2 {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: #7D230D;
+    border-radius: 100%;
+    margin-left: 60px;
+    border: solid 5px rgba(230, 230, 230, 1);
+}
+
+.joystick-main-container .centerStart {
+    background-color: #B8B8B8;
+    position: absolute;
+    height: 35px;
+    width: 10px;
+    margin-left: 180px;
+    margin-top: 110px;
+    transform: rotate(20deg);
+}
+
+.joystick-main-container .centerSelect {
+    background-color: #B8B8B8;
+    position: absolute;
+    height: 35px;
+    width: 10px;
+    margin-left: 205px;
+    margin-top: 110px;
+    transform: rotate(20deg);
+}
+
+.joystick-main-container .SLeft {
+    background-color: #B8B8B8;
+    position: absolute;
+    border-radius: 100%;
+    height: 10px;
+    width: 10px;
+    margin-top: 30px;
+}
+
+.joystick-main-container .SRight {
+    background-color: #B8B8B8;
+    position: absolute;
+    border-radius: 100%;
+    height: 10px;
+    width: 10px;
+    margin-top: -5px;
+}
+
+.joystick-main-container .cable {
+    background-color: black;
+    width: 10px;
+    height: 150px;
+    position: absolute;
+    top: 0;
+    left: 320px;
+    margin-top: -100px;
+    box-shadow: 7px 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.falling-item {
+    user-select: none;
+    animation: rotate-item 4s linear infinite;
+}
+
+@keyframes rotate-item {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ─── SIMPLE PAGE FADE TRANSITION ─── */
+.page-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    z-index: 25000;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.page-transition-overlay.hidden {
+    opacity: 0;
+}
+
+.page-transition-overlay.visible {
+    opacity: 1;
+    pointer-events: all;
+}

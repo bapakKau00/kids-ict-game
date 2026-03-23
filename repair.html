@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PC Setup — Wire It Up</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="js/music.js"></script>
+<style>
+:root {
+  --bg:      #0f1117;
+  --surface: #181c26;
+  --border:  #2a3045;
+  --accent:  #00e5ff;
+  --accent2: #7c3aed;
+  --ok:      #22c55e;
+  --text:    #c8d0e0;
+  --dim:     #5a6070;
+}
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+body {
+  background: var(--bg);
+  font-family: 'Exo 2', sans-serif;
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── TOP BAR ── */
+.top-bar {
+  height: 48px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; z-index: 1000;
+}
+.top-bar h1 { font-family:'Share Tech Mono',monospace; font-size:.92rem; color:var(--accent); letter-spacing:.1em; }
+.prog-wrap  { width:200px; height:8px; background:var(--border); border-radius:99px; overflow:hidden; }
+.prog-fill  { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--accent2),var(--accent)); transition:width .4s; }
+.conn-label { font-family:'Share Tech Mono',monospace; font-size:.75rem; color:var(--dim); }
+
+/* ── CANVAS ── */
+#canvas {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 48px);
+  overflow: hidden;
+}
+
+/* ── SCENE ELEMENTS (z-index 1-4, NEVER 200+) ── */
+.scene-el { position: absolute; }
+
+#wall  { inset:0; z-index:0; background:#13151e; }
+#floor { bottom:0; left:0; right:0; height:100px; z-index:1;
+         background:linear-gradient(#0e1018,#080a0f); border-top:1px solid #1a1d28; }
+
+/* DESK */
+#desk-top  { bottom:100px; left:50%; transform:translateX(-50%); width:860px; height:22px;
+             background:linear-gradient(#4a3018,#2a1c0c); border-radius:5px 5px 0 0;
+             border-top:2px solid #6a4828; z-index:3; box-shadow:0 4px 24px #000a; }
+#desk-leg-l { bottom:100px; left:calc(50% - 412px); width:24px; height:100px;
+              background:linear-gradient(90deg,#1e1408,#3a2810); border-radius:0 0 4px 4px; z-index:2; }
+#desk-leg-r { bottom:100px; right:calc(50% - 412px); width:24px; height:100px;
+              background:linear-gradient(90deg,#3a2810,#1e1408); border-radius:0 0 4px 4px; z-index:2; }
+
+/* POWER STRIP */
+#power-strip {
+  top:40px; left:40px;
+  width:275px; height:48px; z-index:4;
+  background:linear-gradient(180deg,#222,#141414);
+  border:1.5px solid #333; border-radius:8px;
+  display:flex; align-items:center; padding:0 8px; gap:5px;
+  box-shadow:0 2px 12px #0008;
+}
+.strip-lbl { font-family:'Share Tech Mono',monospace; font-size:7px; color:#333; writing-mode:vertical-rl; margin-right:2px; }
+.outlet-vis {
+  width:28px; height:34px;
+  background:#0a0a0a; border:1.5px solid #2a2a2a; border-radius:4px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  transition:border-color .3s, box-shadow .3s;
+  flex-shrink:0;
+}
+.outlet-vis .h { width:5px; height:8px; background:#050505; border-radius:2px; pointer-events:none; }
+.outlet-vis.occupied { border-color:var(--ok); box-shadow:0 0 10px #22c55e44; }
+.outlet-vis.occupied .h { background:var(--ok); opacity:.45; }
+.strip-sw { margin-left:auto; display:flex; flex-direction:column; align-items:center; gap:3px; }
+.strip-sw-btn { width:20px; height:11px; background:#1a0000; border:1px solid #440000; border-radius:3px;
+  display:flex; align-items:center; justify-content:center; }
+.strip-sw-inner { width:13px; height:6px; background:#cc0000; border-radius:2px; box-shadow:0 0 5px #cc0000aa; }
+
+/* PC TOWER */
+#pc {
+  bottom:122px; right:calc(50% - 420px);
+  width:100px; height:175px; z-index:4;
+  background:linear-gradient(135deg,#252830,#1a1d24);
+  border:1.5px solid #2e3240; border-radius:10px;
+  box-shadow:3px 3px 20px #000a;
+}
+.pc-pwrbtn { position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  width:13px; height:13px; border-radius:50%; background:#090909; border:1.5px solid #2e2e2e; transition:all .3s; }
+.pc-pwrbtn.on { background:var(--ok); box-shadow:0 0 12px var(--ok); border-color:var(--ok); }
+.pc-hdd-led { position:absolute; top:32px; right:12px;
+  width:6px; height:6px; border-radius:50%; background:#1a1a1a; transition:all .3s; }
+.pc-hdd-led.on { background:#ff6600; box-shadow:0 0 7px #ff6600; }
+.pc-inner { position:absolute; top:42px; left:50%; transform:translateX(-50%);
+  width:76px; display:flex; flex-direction:column; align-items:center; gap:7px; }
+.pc-drive { width:70px; height:9px; background:#0d0d0d; border:1px solid #1a1a1a; border-radius:2px; }
+.pc-usb-row { display:flex; gap:4px; }
+.pc-usb-slot { width:17px; height:8px; background:#081820; border:1px solid #0d2840; border-radius:2px; }
+.pc-brand { font-family:'Share Tech Mono',monospace; font-size:8px; color:#252830; letter-spacing:.15em; }
+.pc-vent { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); width:72px; display:flex; flex-direction:column; gap:3px; }
+.pc-vline { height:2px; background:#1e2028; border-radius:1px; }
+
+/* MONITOR */
+#monitor { bottom:122px; left:calc(50% - 90px); transform:translateX(-50%); width:360px; z-index:4; }
+.mon-bezel { width:360px; height:218px; background:#111316; border:3px solid #1a1c22; border-radius:10px;
+  position:relative; box-shadow:0 8px 40px #000c; }
+.mon-screen { position:absolute; inset:10px; background:#04060a; border-radius:5px; overflow:hidden;
+  transition:background .8s, box-shadow .8s; }
+.mon-screen.on { background:#08112a; box-shadow:0 0 50px #00e5ff22 inset; }
+.screen-taskbar { height:20px; background:#0a1420; border-bottom:1px solid #101e30;
+  display:flex; align-items:center; padding:0 7px; gap:5px; }
+.sc-dot { width:6px; height:6px; border-radius:50%; }
+.screen-desktop { display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
+  gap:10px; padding:12px; flex:1;
+  background:linear-gradient(135deg,#091525,#0c1e38,#060f20); }
+.screen-icon { width:34px; height:34px; background:#ffffff0d; border:1px solid #ffffff12;
+  border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:15px; }
+.screen-content { width:100%; height:100%; opacity:0; transition:opacity 1.2s .4s; display:flex; flex-direction:column; }
+.screen-content.on { opacity:1; }
+#no-signal { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:'Share Tech Mono',monospace; font-size:11px; color:#18202e; }
+.mon-led { position:absolute; bottom:6px; right:14px; width:6px; height:6px; border-radius:50%;
+  background:#1a1a1a; transition:all .4s; }
+.mon-led.on { background:var(--ok); box-shadow:0 0 8px var(--ok); }
+.mon-neck { width:28px; height:28px; background:#181818; margin:0 auto; }
+.mon-base { width:110px; height:14px; background:linear-gradient(#1e1e1e,#111);
+  border-radius:0 0 8px 8px; margin:0 auto; }
+
+/* KEYBOARD */
+#keyboard {
+  bottom:122px; left:calc(50% - 90px); transform:translateX(-50%); margin-left:15px;
+  width:288px; height:86px; z-index:4;
+  background:linear-gradient(180deg,#1c1e24,#13151b);
+  border:1.5px solid #25282e; border-radius:8px;
+  padding:7px 9px; box-shadow:0 2px 12px #0006;
+}
+.kb-row { display:flex; gap:3px; margin-bottom:3px; }
+.kb-k { flex:1; height:13px; background:#21242c; border-radius:2px; border-top:1px solid #2a2e38; }
+.kb-wide{flex:2;} .kb-enter{flex:2.2;} .kb-space{flex:5;}
+
+/* MOUSE */
+#mouse {
+  bottom:124px; left:calc(50% + 120px);
+  width:50px; height:75px; z-index:4;
+  background:linear-gradient(180deg,#1a1c22,#0e1014);
+  border:1.5px solid #232530; border-radius:25px 25px 20px 20px;
+  box-shadow:2px 2px 10px #0006; position:absolute;
+}
+.mouse-split { position:absolute; top:0; left:50%; width:1px; height:33px; background:#1c1e24; }
+.mouse-wheel { position:absolute; top:8px; left:50%; transform:translateX(-50%);
+  width:8px; height:15px; background:#282a32; border-radius:4px; border:1px solid #343640; }
+.mouse-glow  { position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+  width:10px; height:4px; background:#ff000010; border-radius:2px; transition:all .3s; }
+.mouse-glow.on { background:#ff3300; box-shadow:0 0 8px #ff330077; }
+
+/* SPEAKERS */
+.spk {
+  bottom:122px; width:62px; height:98px; z-index:4;
+  background:linear-gradient(135deg,#1c1e24,#121418);
+  border:1.5px solid #252830; border-radius:8px;
+  box-shadow:2px 2px 12px #0007;
+}
+#spk-l { left:calc(50% - 420px + 10px); }
+#spk-r { right:calc(50% - 280px); }
+.spk-grille { position:absolute; top:10px; left:50%; transform:translateX(-50%);
+  width:36px; height:36px; border-radius:50%;
+  background:radial-gradient(circle,#0d0d0d,#080808); border:1.5px solid #282828; }
+.spk-grille::after { content:''; position:absolute; inset:7px; border-radius:50%;
+  background:#060606; border:1px solid #1a1a1a; }
+.spk-led { position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+  width:6px; height:6px; border-radius:50%; background:#1a1a1a; transition:all .3s; }
+.spk-led.on { background:#00aaff; box-shadow:0 0 8px #00aaff; }
+
+/* ═══════════════════════════════════════════════════════
+   PORT NODES — direct children of #canvas, always on top
+   ═══════════════════════════════════════════════════════ */
+.port-node {
+  position: absolute;
+  z-index: 500;          /* way above all scene elements */
+  transform: translate(-50%, -50%);
+  cursor: crosshair;
+  transition: transform .2s, border-color .2s, box-shadow .2s, background .2s;
+  /* round port default */
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  border: 2px solid #3a4050;
+  background: #080a10;
+  display: flex; align-items: center; justify-content: center;
+}
+.port-node.rect {
+  border-radius: 3px;
+  width: 20px; height: 11px;
+}
+.port-node.outlet-port {
+  border-radius: 5px;
+  width: 28px; height: 34px;
+  background: #0a0a0a;
+  flex-direction: column; gap:4px;
+}
+.outlet-hole { width:5px; height:8px; background:#040404; border-radius:2px; pointer-events:none; flex-shrink:0; }
+
+/* States */
+.port-node:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 14px var(--accent);
+  transform: translate(-50%,-50%) scale(1.4);
+}
+.port-node.drag-target {
+  border-color: var(--ok);
+  box-shadow: 0 0 18px var(--ok);
+  transform: translate(-50%,-50%) scale(1.5);
+  animation: pulse-target 1s ease-in-out infinite;
+}
+@keyframes pulse-target {
+  0%,100% { box-shadow: 0 0 18px var(--ok); }
+  50%      { box-shadow: 0 0 30px var(--ok); }
+}
+.port-node.connected {
+  border-color: var(--ok);
+  background: var(--ok);
+  box-shadow: 0 0 10px var(--ok);
+}
+.port-node.outlet-port.connected {
+  border-color: var(--ok);
+  background: #0a0a0a;
+  box-shadow: 0 0 12px #22c55e55;
+}
+.port-node.outlet-port.connected .outlet-hole { background: var(--ok); opacity:.5; }
+
+/* Tooltip via ::after */
+.port-node::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%; transform: translateX(-50%);
+  background: #050810ee;
+  color: var(--accent);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  padding: 2px 8px; border-radius: 4px;
+  border: 1px solid var(--accent);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0; transition: opacity .15s;
+}
+.port-node:hover::after { opacity: 1; }
+
+/* ── SVG WIRE LAYER (z-index 3, behind objects) ── */
+#wire-svg {
+  position: absolute; inset:0;
+  width:100%; height:100%;
+  pointer-events: none;
+  z-index: 3;
+}
+#wire-svg .wire {
+  pointer-events: stroke;
+  cursor: pointer;
+}
+#wire-svg .wire:hover { opacity: .7; }
+
+/* ── CHECKLIST ── */
+#checklist {
+  position: fixed; top:58px; right:14px;
+  width:215px; background:var(--surface);
+  border:1px solid var(--border); border-radius:12px;
+  padding:13px 15px; z-index:600;
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+}
+#checklist h6 { font-size:9px; letter-spacing:.15em; color:var(--accent); margin-bottom:10px; }
+.chk { display:flex; align-items:center; gap:8px; margin-bottom:7px; color:var(--dim); transition:color .3s; }
+.chk.done { color:var(--ok); }
+.chk-box { width:13px; height:13px; border:1.5px solid currentColor; border-radius:3px;
+  display:flex; align-items:center; justify-content:center; font-size:8px; flex-shrink:0; }
+
+/* ── HINT ── */
+#hint {
+  position:fixed; bottom:14px; left:50%; transform:translateX(-50%);
+  background:var(--surface); border:1px solid var(--border); border-radius:20px;
+  padding:7px 22px; font-family:'Share Tech Mono',monospace; font-size:10px;
+  color:var(--dim); z-index:600; pointer-events:none; white-space:nowrap;
+}
+#hint b { color:var(--accent); font-weight:400; }
+
+/* ── WIN OVERLAY ── */
+#win { display:none; position:fixed; inset:0; background:#000b; z-index:900;
+  align-items:center; justify-content:center; }
+#win.show { display:flex; animation:fi .5s ease; }
+@keyframes fi { from{opacity:0} to{opacity:1} }
+.win-box { background:var(--surface); border:1px solid var(--accent); border-radius:16px;
+  padding:40px 52px; text-align:center; box-shadow:0 0 60px #00e5ff33; }
+.win-box h2 { font-family:'Share Tech Mono',monospace; font-size:2rem; color:var(--accent); margin-bottom:8px; }
+.win-box p  { color:var(--dim); font-size:.88rem; margin-bottom:22px; }
+.win-btn { background:var(--accent2); color:#fff; border:none; padding:10px 28px;
+  border-radius:8px; font-family:'Exo 2',sans-serif; font-weight:600; cursor:pointer; }
+.win-btn:hover { background:#6d28d9; }
+/* NEXT GAME BUTTON */
+#next-game-btn {
+  padding: 6px 16px; 
+  font-size: 0.85rem; 
+  font-weight: 700; 
+  text-decoration: none; 
+  border-radius: 50px; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  transition: all 0.3s;
+  background: var(--border); 
+  color: var(--dim);
+  border: 1px solid var(--border);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+#next-game-btn.unlocked {
+  background: var(--ok); 
+  color: white; 
+  border-color: #1ba34e;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+  cursor: pointer;
+  opacity: 1;
+}
+#next-game-btn.unlocked:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="d-flex align-items-center">
+    <a href="index.html" class="btn btn-sm me-3 py-1" style="background:#f86565; color:white; font-family:'Exo 2',sans-serif; border: 2px solid #ed5353; font-weight: bold; text-decoration:none;">⬅ Kembali ke Menu</a>
+    <h1 class="mb-0 pt-1">[ PASANG KOMPUTER — SAMBUNGKAN KABEL ]</h1>
+  </div>
+  <div class="d-flex align-items-center gap-3">
+    <span class="conn-label" id="conn-label">0 / 8 disambung</span>
+    <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <a href="repair-part2.html" id="next-game-btn" onclick="handleNextClick(event)">Seterusnya <i class="bi bi-arrow-right-circle-fill"></i></a>
+  </div>
+</div>
+
+<!-- CANVAS -->
+<div id="canvas">
+
+  <!-- SCENE LAYER (z-index 0-4, never 500) -->
+  <div class="scene-el" id="wall"></div>
+  <div class="scene-el" id="floor"></div>
+  <div class="scene-el" id="desk-leg-l"></div>
+  <div class="scene-el" id="desk-leg-r"></div>
+  <div class="scene-el" id="desk-top"></div>
+
+  <!-- POWER STRIP -->
+  <div class="scene-el" id="power-strip">
+    <span class="strip-lbl">POWER</span>
+    <div class="outlet-vis" id="ov-1"><div class="h"></div><div class="h"></div></div>
+    <div class="outlet-vis" id="ov-2"><div class="h"></div><div class="h"></div></div>
+    <div class="outlet-vis" id="ov-3"><div class="h"></div><div class="h"></div></div>
+    <div class="outlet-vis" id="ov-4"><div class="h"></div><div class="h"></div></div>
+    <div class="outlet-vis" id="ov-5"><div class="h"></div><div class="h"></div></div>
+    <div class="strip-sw">
+      <div class="strip-sw-btn"><div class="strip-sw-inner"></div></div>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:7px;color:#333">ON</span>
+    </div>
+  </div>
+
+  <!-- PC TOWER -->
+  <div class="scene-el" id="pc">
+    <div class="pc-pwrbtn" id="pc-pwrbtn"></div>
+    <div class="pc-hdd-led" id="pc-hdd-led"></div>
+    <div class="pc-inner">
+      <div class="pc-drive"></div>
+      <div class="pc-drive"></div>
+      <div class="pc-usb-row">
+        <div class="pc-usb-slot"></div>
+        <div class="pc-usb-slot"></div>
+        <div class="pc-usb-slot"></div>
+      </div>
+      <div class="pc-brand">UNIT-01</div>
+    </div>
+    <div class="pc-vent">
+      <div class="pc-vline"></div><div class="pc-vline"></div><div class="pc-vline"></div>
+    </div>
+  </div>
+
+  <!-- MONITOR -->
+  <div class="scene-el" id="monitor">
+    <div class="mon-bezel">
+      <div class="mon-screen" id="mon-screen">
+        <div id="no-signal">NO SIGNAL</div>
+        <div class="screen-content" id="screen-content">
+          <div class="screen-taskbar">
+            <div class="sc-dot" style="background:#ff5f56"></div>
+            <div class="sc-dot" style="background:#ffbd2e"></div>
+            <div class="sc-dot" style="background:#27c93f"></div>
+            <div style="flex:1;height:6px;background:#0e1e30;border-radius:3px;margin:0 8px"></div>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:7px;color:#1a3850">DESKTOP</span>
+          </div>
+          <div class="screen-desktop">
+            <div class="screen-icon">📁</div><div class="screen-icon">🖥️</div>
+            <div class="screen-icon">⚙️</div><div class="screen-icon">🎵</div>
+            <div class="screen-icon">🌐</div>
+          </div>
+        </div>
+      </div>
+      <div class="mon-led" id="mon-led"></div>
+    </div>
+    <div class="mon-neck"></div>
+    <div class="mon-base"></div>
+  </div>
+
+  <!-- KEYBOARD -->
+  <div class="scene-el" id="keyboard">
+    <div class="kb-row"><div class="kb-k kb-wide"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div></div>
+    <div class="kb-row"><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k kb-enter"></div></div>
+    <div class="kb-row"><div class="kb-k kb-enter"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k"></div><div class="kb-k kb-enter"></div></div>
+    <div class="kb-row"><div class="kb-k" style="flex:1.5"></div><div class="kb-k kb-space"></div><div class="kb-k" style="flex:1.5"></div></div>
+  </div>
+
+  <!-- MOUSE -->
+  <div class="scene-el" id="mouse">
+    <div class="mouse-split"></div>
+    <div class="mouse-wheel"></div>
+    <div class="mouse-glow" id="mouse-glow"></div>
+  </div>
+
+  <!-- SPEAKERS -->
+  <div class="scene-el spk" id="spk-l">
+    <div class="spk-grille"></div>
+    <div class="spk-led" id="spk-led-l"></div>
+  </div>
+  <div class="scene-el spk" id="spk-r">
+    <div class="spk-grille"></div>
+    <div class="spk-led" id="spk-led-r"></div>
+  </div>
+
+  <!-- SVG wire layer (z-index 6) -->
+  <svg id="wire-svg" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="2.5" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <path id="preview-path" fill="none" stroke="var(--accent)" stroke-width="2"
+          stroke-dasharray="7 4" stroke-linecap="round" style="display:none; pointer-events:none"/>
+  </svg>
+
+  <!-- PORT NODES injected by JS as direct children of #canvas at z-index 500 -->
+
+</div><!-- /canvas -->
+
+<!-- CHECKLIST -->
+<div id="checklist">
+  <h6>⚡ SAMBUNGAN</h6>
+  <div class="chk" id="chk-hdmi"> <div class="chk-box">✓</div><span>HDMI (PC→Monitor)</span></div>
+  <div class="chk" id="chk-kbd">  <div class="chk-box">✓</div><span>USB Papan Kekunci</span></div>
+  <div class="chk" id="chk-mouse"><div class="chk-box">✓</div><span>USB Tetikus</span></div>
+  <div class="chk" id="chk-audio"><div class="chk-box">✓</div><span>Audio PC→Speaker</span></div>
+  <div class="chk" id="chk-spk-usb"><div class="chk-box">✓</div><span>Kuasa USB Speaker</span></div>
+  <div class="chk" id="chk-spk-link"><div class="chk-box">✓</div><span>Pautan Spk Kiri→Kanan</span></div>
+  <div class="chk" id="chk-ppwr"> <div class="chk-box">✓</div><span>Kuasa PC</span></div>
+  <div class="chk" id="chk-mpwr"> <div class="chk-box">✓</div><span>Kuasa Monitor</span></div>
+</div>
+
+<div id="hint"><b>Klik titik bercahaya</b> tarik ke port yang betul &nbsp;|&nbsp; <b>Klik kabel</b> untuk buang</div>
+
+<div id="win">
+  <div class="win-box" style="position: relative;">
+    <button onclick="document.getElementById('win').classList.remove('show')" style="position: absolute; top: 10px; right: 15px; background: transparent; border: none; color: var(--dim); font-size: 1.8rem; cursor: pointer; line-height: 1;" title="Tutup">&times;</button>
+    <h2>🖥 SISTEM BERFUNGSI</h2>
+    <p>Semua sambungan berjaya!<br>Desktop telah dihidupkan.</p>
+    <a href="repair-part2.html" class="win-btn" style="background:#22c55e; text-decoration:none;">Game Seterusnya</a>
+    <a href="index.html" class="win-btn" style="background:#0fb9b1; text-decoration:none; margin-left:15px;">Menu Utama</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════════════
+//  PORT DEFINITIONS
+//  anchorEl : id of scene element to attach to
+//  side     : which edge ('right','left','top','bottom','center')
+//  along    : 0..1 position along that edge
+//  accepts  : cable type string (must match other port's accepts to connect)
+//  checkId  : checklist item to tick when this wire is placed
+//  outletVis: id of the .outlet-vis element to animate when connected
+// ══════════════════════════════════════════════════════════════════
+const PORT_DEFS = [
+  // PC ─ back-panel ports on the RIGHT side
+  { id:'p-pc-hdmi',    label:'PC · HDMI KELUAR',   cls:'rect',       anchorEl:'pc',       side:'right',  along:.20, accepts:'hdmi',       checkId:'chk-hdmi'  },
+  { id:'p-pc-audio',   label:'PC · Audio KELUAR',   cls:'',           anchorEl:'pc',       side:'right',  along:.38, accepts:'audio',      checkId:'chk-audio' },
+  { id:'p-pc-pwr',     label:'PC · Kuasa MASUK',    cls:'rect',       anchorEl:'pc',       side:'right',  along:.85, accepts:'power-pc',   checkId:'chk-ppwr'  },
+  // PC ─ front USB slots on the FRONT (bottom edge works well visually)
+  { id:'p-pc-usb-kbd', label:'PC · USB (Papan Kekunci)', cls:'rect',  anchorEl:'pc',       side:'bottom', along:.20, accepts:'usb-kbd',    checkId:'chk-kbd'   },
+  { id:'p-pc-usb-mse', label:'PC · USB (Tetikus)',  cls:'rect',       anchorEl:'pc',       side:'bottom', along:.50, accepts:'usb-mse',    checkId:'chk-mouse' },
+  { id:'p-pc-usb-spk', label:'PC · USB (Speaker)',  cls:'rect',       anchorEl:'pc',       side:'bottom', along:.80, accepts:'usb-spk',    checkId:'chk-spk-usb' },
+
+  // Monitor ─ bottom edge
+  { id:'p-mon-hdmi',   label:'Monitor · HDMI MASUK', cls:'rect',      anchorEl:'monitor',  side:'bottom', along:.38, accepts:'hdmi'                            },
+  { id:'p-mon-pwr',    label:'Monitor · Kuasa',      cls:'rect',      anchorEl:'monitor',  side:'bottom', along:.56, accepts:'power-mon',  checkId:'chk-mpwr'  },
+
+  // Keyboard ─ right side
+  { id:'p-kbd-usb',    label:'Papan Kekunci · USB',  cls:'rect',      anchorEl:'keyboard', side:'right',  along:.50, accepts:'usb-kbd'                          },
+
+  // Mouse ─ top (cable comes from top)
+  { id:'p-mse-usb',    label:'Tetikus · USB',        cls:'rect',      anchorEl:'mouse',    side:'top',    along:.50, accepts:'usb-mse'                          },
+
+  // Left speaker (Connects to Right speaker)
+  { id:'p-spkl-link', label:'Spk Kiri · Pautan ke Kanan', cls:'', anchorEl:'spk-l', side:'right', along:.65, accepts:'spk-link', checkId:'chk-spk-link' },
+
+  // Right speaker (Main Hub connects to PC)
+  { id:'p-spkr-link',  label:'Spk Kanan · Pautan Dari Kiri', cls:'',      anchorEl:'spk-r', side:'left', along:.40, accepts:'spk-link' },
+  { id:'p-spkr-audio', label:'Spk Kanan · Audio PC MASUK',   cls:'',      anchorEl:'spk-r', side:'left', along:.65, accepts:'audio' },
+  { id:'p-spkr-usb',   label:'Spk Kanan · Kuasa USB MASUK',  cls:'rect',  anchorEl:'spk-r', side:'left', along:.85, accepts:'usb-spk' },
+
+  // Power strip outlets ─ center of each outlet-vis element
+  { id:'p-out-1', label:'Soket 1', cls:'outlet-port', anchorEl:'ov-1', side:'center', along:.5, accepts:'power-pc',   outletVis:'ov-1' },
+  { id:'p-out-2', label:'Soket 2', cls:'outlet-port', anchorEl:'ov-2', side:'center', along:.5, accepts:'power-mon',  outletVis:'ov-2' },
+  { id:'p-out-3', label:'Soket 3', cls:'outlet-port', anchorEl:'ov-3', side:'center', along:.5, accepts:'power-spkl', outletVis:'ov-3' },
+  { id:'p-out-4', label:'Soket 4', cls:'outlet-port', anchorEl:'ov-4', side:'center', along:.5, accepts:'power-spkr', outletVis:'ov-4' },
+  { id:'p-out-5', label:'Soket 5 (Lebih)', cls:'outlet-port', anchorEl:'ov-5', side:'center', along:.5, accepts:'__none__' },
+];
+
+const CABLE_COLOR = {
+  'hdmi':       '#3a9aff',
+  'audio':      '#00cc88',
+  'usb-kbd':    '#aa55ff',
+  'usb-mse':    '#ff55aa',
+  'usb-spk':    '#00e5ff',
+  'spk-link':   '#00cc88',
+  'power-pc':   '#f59e0b',
+  'power-mon':  '#f59e0b',
+};
+
+// Compatible port-pairs (symmetric)
+const PAIRS = [
+  ['p-pc-hdmi',    'p-mon-hdmi'],
+  ['p-pc-usb-kbd', 'p-kbd-usb'],
+  ['p-pc-usb-mse', 'p-mse-usb'],
+  ['p-pc-usb-spk', 'p-spkr-usb'],
+  ['p-pc-audio',   'p-spkr-audio'],
+  ['p-spkl-link',  'p-spkr-link'],
+  ['p-pc-pwr',     'p-out-1'],
+  ['p-mon-pwr',    'p-out-2'],
+];
+
+const COMPAT = {};
+PAIRS.forEach(([a,b]) => {
+  (COMPAT[a]=COMPAT[a]||[]).push(b);
+  (COMPAT[b]=COMPAT[b]||[]).push(a);
+});
+
+const PORT_MAP = {};
+PORT_DEFS.forEach(d => PORT_MAP[d.id] = d);
+
+// ── STATE ──────────────────────────────────────────────
+let portUsed = {};
+let wires    = [];
+let nextId   = 0;
+let drag     = null;  // {fromId, x1, y1}
+
+const REQUIRED_CHECKS = ['chk-hdmi','chk-kbd','chk-mouse','chk-audio','chk-spk-usb','chk-spk-link','chk-ppwr','chk-mpwr'];
+const canvas = document.getElementById('canvas');
+
+// ── PORT PLACEMENT ─────────────────────────────────────
+function canvasRect() { return canvas.getBoundingClientRect(); }
+
+function elRect(id) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const cr = canvasRect();
+  const er = el.getBoundingClientRect();
+  return { left: er.left-cr.left, top: er.top-cr.top, w: er.width, h: er.height };
+}
+
+function portXY(def) {
+  const r = elRect(def.anchorEl);
+  if (!r) return {x:200, y:200};
+  const {left:L, top:T, w:W, h:H} = r;
+  const a = def.along;
+  switch(def.side) {
+    case 'right':  return { x: L+W+1,      y: T + H*a };
+    case 'left':   return { x: L-1,         y: T + H*a };
+    case 'top':    return { x: L + W*a,     y: T-1      };
+    case 'bottom': return { x: L + W*a,     y: T+H+1    };
+    case 'center': return { x: L + W*.5,    y: T + H*.5 };
+    default:       return { x: L + W*.5,    y: T + H*.5 };
+  }
+}
+
+function createPortNodes() {
+  PORT_DEFS.forEach(def => {
+    const node = document.createElement('div');
+    node.id = 'pn-' + def.id;
+    node.className = 'port-node' + (def.cls ? ' '+def.cls : '');
+    node.dataset.portId = def.id;
+    node.dataset.label  = def.label;
+
+    if (def.cls === 'outlet-port') {
+      node.innerHTML = '<div class="outlet-hole"></div><div class="outlet-hole"></div>';
+    }
+
+    const {x,y} = portXY(def);
+    node.style.left = x + 'px';
+    node.style.top  = y + 'px';
+
+    canvas.appendChild(node);
+    node.addEventListener('mousedown', onPortDown);
+    node.addEventListener('mouseenter', onPortEnter);
+    node.addEventListener('mouseleave', onPortLeave);
+  });
+}
+
+function repositionAll() {
+  PORT_DEFS.forEach(def => {
+    const node = document.getElementById('pn-'+def.id);
+    if (!node) return;
+    const {x,y} = portXY(def);
+    node.style.left = x+'px';
+    node.style.top  = y+'px';
+  });
+  wires.forEach(refreshWirePath);
+}
+
+// ── WIRE PATHS ─────────────────────────────────────────
+function nodeXY(portId) {
+  const n = document.getElementById('pn-'+portId);
+  if (!n) return null;
+  const cr = canvasRect();
+  const nr = n.getBoundingClientRect();
+  return { x: nr.left-cr.left+nr.width/2, y: nr.top-cr.top+nr.height/2 };
+}
+
+function curvePath(x1, y1, x2, y2, index = 0, pA = '', pB = '') {
+  const hasNode = (id) => (pA === id || pB === id);
+  let routeY = null;
+
+  if (hasNode('p-spkl-link') || hasNode('p-spkr-link')) {
+    // 1. Spk kiri > Spk kanan (elbowed to top of monitor)
+    routeY = Math.min(y1, y2) - 220 + (index * 8);
+  } 
+  else if (hasNode('p-spkr-audio') || hasNode('p-pc-audio')) {
+    // 2. Spk kanan > PC audio (elbowed to top of PC)
+    routeY = Math.min(y1, y2) - 100 + (index * 8);
+  }
+  
+  if (routeY !== null) {
+    routeY = Math.max(20, routeY); // Clamp to prevent clipping out of top canopy
+    return `M${x1},${y1} L${x1},${routeY} L${x2},${routeY} L${x2},${y2}`;
+  }
+
+  // Default: Route DOWN (under desk)
+  const dropY = Math.max(y1, y2) + 25 + (index * 12);
+  return `M${x1},${y1} L${x1},${dropY} L${x2},${dropY} L${x2},${y2}`;
+}
+
+function refreshWirePath(w) {
+  const c1=nodeXY(w.a), c2=nodeXY(w.b);
+  if (!c1||!c2||!w.el) return;
+  const wireIndex = wires.indexOf(w);
+  w.el.setAttribute('d', curvePath(c1.x,c1.y,c2.x,c2.y, wireIndex, w.a, w.b));
+}
+
+// ── DRAG HANDLERS ──────────────────────────────────────
+function isOutlet(id) { return id && id.startsWith('p-out-'); }
+function portFree(id) { return isOutlet(id) ? true : !portUsed[id]; }
+function canConnect(a,b) { return !!(COMPAT[a]&&COMPAT[a].includes(b)); }
+
+function onPortDown(e) {
+  if (e.button!==0) return;
+  e.preventDefault(); e.stopPropagation();
+  const portId = e.currentTarget.dataset.portId;
+  if (!portFree(portId)) return;
+
+  const c = nodeXY(portId);
+  if (!c) return;
+  drag = {fromId:portId, x1:c.x, y1:c.y};
+
+  const prev = document.getElementById('preview-path');
+  prev.setAttribute('d', `M${c.x},${c.y} L${c.x},${c.y}`);
+  prev.style.display = '';
+
+  PORT_DEFS.forEach(def => {
+    if (def.id===portId) return;
+    if (canConnect(portId,def.id) && portFree(def.id))
+      document.getElementById('pn-'+def.id)?.classList.add('drag-target');
+  });
+
+  document.addEventListener('mousemove', onDrag, {passive:true});
+  document.addEventListener('mouseup',   onDrop);
+}
+
+function onDrag(e) {
+  if (!drag) return;
+  const cr = canvasRect();
+  const x = e.clientX-cr.left, y = e.clientY-cr.top;
+  document.getElementById('preview-path').setAttribute('d', curvePath(drag.x1,drag.y1,x,y, wires.length, drag.fromId, ''));
+}
+
+function onDrop(e) {
+  document.removeEventListener('mousemove', onDrag);
+  document.removeEventListener('mouseup',   onDrop);
+  document.getElementById('preview-path').style.display='none';
+  PORT_DEFS.forEach(d => document.getElementById('pn-'+d.id)?.classList.remove('drag-target'));
+
+  if (!drag) return;
+  const fromId = drag.fromId; drag=null;
+
+  const hit = document.elementFromPoint(e.clientX, e.clientY);
+  const targetNode = hit?.closest('.port-node');
+  if (!targetNode) return;
+  const toId = targetNode.dataset.portId;
+  if (!toId||toId===fromId) return;
+  if (canConnect(fromId,toId) && portFree(toId)) addWire(fromId,toId);
+}
+
+function onPortEnter(e) {
+  if (!drag) return;
+  const toId = e.currentTarget.dataset.portId;
+  if (canConnect(drag.fromId,toId)&&portFree(toId))
+    e.currentTarget.classList.add('drag-target');
+}
+function onPortLeave(e) { e.currentTarget.classList.remove('drag-target'); }
+
+// ── ADD / REMOVE WIRE ──────────────────────────────────
+function addWire(a, b) {
+  const defA=PORT_MAP[a], defB=PORT_MAP[b];
+  const type = defA?.accepts || defB?.accepts || 'hdmi';
+  const color = CABLE_COLOR[type] || '#888';
+  const checkId = defA?.checkId || defB?.checkId || null;
+
+  const c1=nodeXY(a), c2=nodeXY(b);
+  if (!c1||!c2) return;
+
+  const svg = document.getElementById('wire-svg');
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('class','wire');
+  path.setAttribute('fill','none');
+  path.setAttribute('stroke', color);
+  path.setAttribute('stroke-width','3');
+  path.setAttribute('stroke-linecap','round');
+  path.setAttribute('filter','url(#glow)');
+  path.setAttribute('d', curvePath(c1.x,c1.y,c2.x,c2.y, wires.length, a, b));
+  const wid = nextId++;
+  path.dataset.wid = wid;
+  path.addEventListener('click', () => removeWire(wid));
+  svg.appendChild(path);
+
+  const w = {id:wid, a, b, color, checkId, el:path};
+  wires.push(w);
+
+  if (!isOutlet(a)) portUsed[a]=wid;
+  if (!isOutlet(b)) portUsed[b]=wid;
+
+  document.getElementById('pn-'+a)?.classList.add('connected');
+  document.getElementById('pn-'+b)?.classList.add('connected');
+
+  // animate outlet-vis element
+  const ovA = defA?.outletVis, ovB = defB?.outletVis;
+  if (ovA) document.getElementById(ovA)?.classList.add('occupied');
+  if (ovB) document.getElementById(ovB)?.classList.add('occupied');
+
+  if (checkId) document.getElementById(checkId)?.classList.add('done');
+  updateProgress();
+}
+
+function removeWire(wid) {
+  const idx = wires.findIndex(w=>w.id===wid);
+  if (idx<0) return;
+  const w = wires.splice(idx,1)[0];
+  w.el.remove();
+
+  if (!isOutlet(w.a)) delete portUsed[w.a];
+  if (!isOutlet(w.b)) delete portUsed[w.b];
+
+  const stillA = wires.some(x=>x.a===w.a||x.b===w.a);
+  const stillB = wires.some(x=>x.a===w.b||x.b===w.b);
+  if (!stillA) document.getElementById('pn-'+w.a)?.classList.remove('connected');
+  if (!stillB) document.getElementById('pn-'+w.b)?.classList.remove('connected');
+
+  // de-animate outlet-vis
+  const defA=PORT_MAP[w.a], defB=PORT_MAP[w.b];
+  const ovA=defA?.outletVis, ovB=defB?.outletVis;
+  if (ovA && !wires.some(x=>x.a===w.a||x.b===w.a)) document.getElementById(ovA)?.classList.remove('occupied');
+  if (ovB && !wires.some(x=>x.a===w.b||x.b===w.b)) document.getElementById(ovB)?.classList.remove('occupied');
+
+  if (w.checkId) {
+    const still=wires.some(x=>x.checkId===w.checkId);
+    if (!still) document.getElementById(w.checkId)?.classList.remove('done');
+  }
+  wires.forEach(refreshWirePath);
+  updateProgress();
+}
+
+// ── PROGRESS & POWER ───────────────────────────────────
+function updateProgress() {
+  const done = REQUIRED_CHECKS.filter(id=>document.getElementById(id)?.classList.contains('done')).length;
+  document.getElementById('prog-fill').style.width=(done/8*100)+'%';
+  document.getElementById('conn-label').textContent=`${done} / 8 disambung`;
+  if (done===8) setTimeout(powerOn,400); else powerOff();
+}
+
+function powerOn() {
+  document.getElementById('pc-pwrbtn').classList.add('on');
+  document.getElementById('pc-hdd-led').classList.add('on');
+  document.getElementById('mon-screen').classList.add('on');
+  document.getElementById('mon-led').classList.add('on');
+  document.getElementById('no-signal').style.display='none';
+  document.getElementById('screen-content').classList.add('on');
+  document.getElementById('spk-led-l').classList.add('on');
+  document.getElementById('spk-led-r').classList.add('on');
+  document.getElementById('mouse-glow').classList.add('on');
+  
+  // Unlock next game
+  const nxt = document.getElementById('next-game-btn');
+  if (nxt) nxt.classList.add('unlocked');
+
+  setTimeout(()=>document.getElementById('win').classList.add('show'),1500);
+}
+
+function powerOff() {
+  ['pc-pwrbtn','pc-hdd-led','mon-led','spk-led-l','spk-led-r','mouse-glow']
+    .forEach(id=>document.getElementById(id)?.classList.remove('on'));
+  document.getElementById('mon-screen').classList.remove('on');
+  document.getElementById('no-signal').style.display='';
+  document.getElementById('screen-content').classList.remove('on');
+  document.getElementById('win').classList.remove('show');
+  
+  // Lock next game
+  const nxt = document.getElementById('next-game-btn');
+  if (nxt) nxt.classList.remove('unlocked');
+}
+
+function handleNextClick(e) {
+  const nxt = document.getElementById('next-game-btn');
+  if (!nxt.classList.contains('unlocked')) {
+    e.preventDefault();
+    alert("⚠️ Siapkan sambungan kabel dahulu untuk menghidupkan komputer!");
+  }
+}
+
+function resetAll() {
+  [...wires].forEach(w=>removeWire(w.id));
+  portUsed={}; wires=[]; nextId=0;
+  powerOff(); updateProgress();
+  REQUIRED_CHECKS.forEach(id=>document.getElementById(id)?.classList.remove('done'));
+}
+
+// ── INIT ───────────────────────────────────────────────
+createPortNodes();
+updateProgress();
+window.addEventListener('resize', repositionAll);
+</script>
+</body>
+</html>

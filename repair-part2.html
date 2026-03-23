@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masa Kamera! 📷</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="js/music.js"></script>
+    <style>
+        /* ─── RESET & BASE ─── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --sky: #fff9f0;
+            --yellow: #FFD93D;
+            --orange: #FF6B35;
+            --red: #FF4757;
+            --green: #2ED573;
+            --teal: #1ABC9C;
+            --blue: #3498DB;
+            --purple: #9B59B6;
+            --dark: #2C3E50;
+            --mid: #7F8C8D;
+            --white: #FFFFFF;
+            --shadow: 0 6px 0px rgba(0, 0, 0, .18);
+            --shadow-lg: 0 10px 0px rgba(0, 0, 0, .15);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--sky);
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+            cursor: default;
+        }
+
+        /* ─── BACKGROUND DOTS ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, #e8d8c8 1.5px, transparent 1.5px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ─── HEADER ─── */
+        header {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 80px 20px 10px;
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            color: var(--dark);
+            text-shadow: 0 4px 0 rgba(0, 0, 0, .12);
+            line-height: 1;
+        }
+
+        header h1 span {
+            color: var(--orange);
+        }
+
+        header p {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--mid);
+            margin-top: 6px;
+        }
+
+        /* ─── STATUS BAR ─── */
+        #status-bar {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 10px 20px;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border-radius: 50px;
+            padding: 7px 18px;
+            box-shadow: var(--shadow);
+            font-size: .95rem;
+            font-weight: 800;
+            color: var(--dark);
+            border: 3px solid transparent;
+            transition: border-color .3s, background .3s;
+        }
+
+        .status-pill .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ddd;
+            flex-shrink: 0;
+            transition: background .3s;
+        }
+
+        .status-pill.ready {
+            border-color: var(--green);
+        }
+
+        .status-pill.ready .dot {
+            background: var(--green);
+        }
+
+        .status-pill.missing {
+            border-color: var(--red);
+        }
+
+        .status-pill.missing .dot {
+            background: var(--red);
+        }
+
+        /* ─── MAIN LAYOUT ─── */
+        #main {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            gap: 20px;
+            padding: 10px 24px 20px;
+            align-items: stretch; /* Match panel heights exactly */
+            justify-content: center;
+        }
+
+        /* ─── CAMERA ZONE ─── */
+        #camera-zone {
+            flex: 0 0 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        /* ─── DROP HIGHLIGHTS on the camera ─── */
+        #camera-wrap {
+            position: relative;
+            width: 300px;
+            transition: transform .25s, filter .25s;
+        }
+        #camera-wrap svg { width: 100%; height: auto; display: block; }
+
+        #camera-wrap.highlight {
+            transform: scale(1.05);
+        }
+
+        #camera-wrap.wrong-drop {
+            animation: shake .4s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0)
+            }
+
+            20% {
+                transform: translateX(-6px)
+            }
+
+            40% {
+                transform: translateX(6px)
+            }
+
+            60% {
+                transform: translateX(-4px)
+            }
+
+            80% {
+                transform: translateX(4px)
+            }
+        }
+
+        /* ─── CAMERA VIEWFINDER / PREVIEW ─── */
+        #viewfinder {
+            width: 300px;
+            height: 200px;
+            background: #1a1a2e;
+            border-radius: 20px;
+            border: 5px solid var(--dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            transition: border-color .25s, background .25s, transform .2s;
+        }
+
+        #viewfinder.highlight {
+            border-color: var(--yellow);
+            background: rgba(255, 217, 61, .15);
+            transform: scale(1.05);
+        }
+
+        #vf-idle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, .35);
+        }
+
+        #vf-idle .vf-icon {
+            font-size: 3rem;
+        }
+
+        #vf-idle p {
+            font-size: .85rem;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        #vf-crosshair {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            inset: 0;
+            background: #0d1b2a;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #vf-crosshair.active {
+            display: flex;
+        }
+
+        .vf-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 255, 180, .08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 180, .08) 1px, transparent 1px);
+            background-size: 33.3% 33.3%;
+        }
+
+        .vf-corner {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-color: var(--green);
+            border-style: solid;
+            border-width: 0;
+        }
+
+        .vf-corner.tl {
+            top: 12px;
+            left: 12px;
+            border-top-width: 3px;
+            border-left-width: 3px;
+            border-radius: 4px 0 0 0;
+        }
+
+        .vf-corner.tr {
+            top: 12px;
+            right: 12px;
+            border-top-width: 3px;
+            border-right-width: 3px;
+            border-radius: 0 4px 0 0;
+        }
+
+        .vf-corner.bl {
+            bottom: 12px;
+            left: 12px;
+            border-bottom-width: 3px;
+            border-left-width: 3px;
+            border-radius: 0 0 0 4px;
+        }
+
+        .vf-corner.br {
+            bottom: 12px;
+            right: 12px;
+            border-bottom-width: 3px;
+            border-right-width: 3px;
+            border-radius: 0 0 4px 0;
+        }
+
+        .vf-reticle {
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--green);
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+            animation: reticle-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes reticle-pulse {
+
+            0%,
+            100% {
+                border-color: var(--green);
+                box-shadow: 0 0 0 0 rgba(46, 213, 115, .4)
+            }
+
+            50% {
+                border-color: #00ff99;
+                box-shadow: 0 0 0 8px rgba(46, 213, 115, 0)
+            }
+        }
+
+        #vf-info {
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: .72rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, .7);
+        }
+
+        /* ─── SNAP BUTTON ─── */
+        #snap-btn {
+            width: 100%;
+            max-width: 220px;
+            padding: 16px;
+            background: var(--orange);
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 7px 0 #c94e1e;
+            cursor: pointer;
+            transition: transform .12s, box-shadow .12s, background .2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #snap-btn:active:not(:disabled) {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 #c94e1e;
+        }
+
+        #snap-btn:disabled {
+            background: #ccc;
+            box-shadow: 0 7px 0 #999;
+            cursor: not-allowed;
+        }
+
+        #snap-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .2);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .3s;
+        }
+
+        #snap-btn:not(:disabled):hover::after {
+            transform: scaleX(1);
+        }
+
+        /* ─── FLASH OVERLAY ─── */
+        #flash {
+            position: fixed;
+            inset: 0;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity .08s;
+        }
+
+        #flash.on {
+            opacity: 1;
+        }
+
+        /* ─── PHOTO STRIP ─── */
+        #photo-strip {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 300px;
+        }
+
+        .photo-thumb {
+            width: 82px;
+            height: 65px;
+            border-radius: 10px;
+            border: 4px solid white;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            flex-shrink: 0;
+            animation: pop-in .35s cubic-bezier(.34, 1.56, .64, 1);
+            position: relative;
+        }
+
+        .photo-thumb canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        @keyframes pop-in {
+            from {
+                transform: scale(0) rotate(-8deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        /* ─── ITEMS TRAY ─── */
+        #items-tray {
+            flex: 1;
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 3px solid #eee;
+            min-width: 260px;
+            max-width: 480px;
+        }
+
+        #items-tray h2 {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tray-section {
+            margin-bottom: 18px;
+        }
+
+        .tray-section h3 {
+            font-size: .78rem;
+            font-weight: 800;
+            color: var(--mid);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .items-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* ─── DRAGGABLE ITEMS ─── */
+        .item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 3px solid #eee;
+            background: white;
+            cursor: grab;
+            transition: transform .15s, box-shadow .15s, opacity .3s;
+            position: relative;
+            min-width: 80px;
+            box-shadow: var(--shadow);
+        }
+
+        .item:hover {
+            transform: translateY(-4px) scale(1.05);
+        }
+
+        .item:active {
+            cursor: grabbing;
+        }
+
+        .item.dragging {
+            opacity: .4;
+            transform: scale(.95);
+        }
+
+        .item.used {
+            opacity: .35;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .item .item-art {
+            font-size: 2.4rem;
+            line-height: 1;
+        }
+
+        .item .item-name {
+            font-size: .72rem;
+            font-weight: 800;
+            color: var(--dark);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* Color coding by type (removed to increase difficulty) */
+
+        /* ─── GHOST (dragging clone) ─── */
+        #ghost {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            display: none;
+            transform: translate(-50%, -50%) scale(1.15) rotate(6deg);
+            filter: drop-shadow(0 12px 20px rgba(0, 0, 0, .3));
+            transition: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 3px solid white;
+            background: white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .25);
+        }
+
+        #ghost.show {
+            display: flex;
+        }
+
+        #ghost .item-art {
+            font-size: 2.4rem;
+            line-height: 1;
+        }
+
+        #ghost .item-name {
+            font-size: .72rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        /* ─── SUCCESS BANNER ─── */
+        #success-banner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--yellow), var(--orange));
+            color: white;
+            text-align: center;
+            padding: 16px;
+            font-size: 1.4rem;
+            font-weight: 900;
+            z-index: 800;
+            box-shadow: 0 6px 0 rgba(0, 0, 0, .15);
+            animation: slide-down .5s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        @keyframes slide-down {
+            from {
+                transform: translateY(-100%)
+            }
+
+            to {
+                transform: translateY(0)
+            }
+        }
+
+        #success-banner.show {
+            display: block;
+        }
+
+        /* ─── HINT BUBBLES ─── */
+        .hint-bubble {
+            position: absolute;
+            background: var(--yellow);
+            color: var(--dark);
+            font-family: 'Nunito', sans-serif;
+            font-size: .72rem;
+            font-weight: 800;
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 3px 0 rgba(0, 0, 0, .15);
+            pointer-events: none;
+            white-space: nowrap;
+            animation: bounce-in .4s cubic-bezier(.34, 1.56, .64, 1) both;
+            z-index: 20;
+        }
+
+        @keyframes bounce-in {
+            from {
+                transform: scale(0);
+                opacity: 0
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
+
+        /* ─── CONFETTI ─── */
+        .confetti-piece {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            pointer-events: none;
+            z-index: 8000;
+            animation: confetti-fall linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-20px) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* responsive */
+        @media(max-width:720px) {
+            #main {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #items-tray {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="index.html"
+        style="position: absolute; top: 20px; left: 20px; padding: 10px 20px; font-size: 1.1rem; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.15); text-decoration: none; background: #fff; color: var(--dark); border-radius: 50px; font-weight: 800; display: flex; align-items: center; gap: 8px; transition: transform 0.2s;"
+        onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        <i class="bi bi-house-fill"></i> Menu Utama
+    </a>
+
+    <!-- TOP RIGHT NAVIGATION -->
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 12px;">
+        <!-- Previous Game -->
+        <a href="repair.html"
+            style="padding: 10px 18px; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.15); text-decoration: none; background: #fff; color: var(--dark); border-radius: 50px; font-weight: 800; display: flex; align-items: center; gap: 6px; transition: transform 0.2s;"
+            onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <i class="bi bi-arrow-left-circle-fill"></i> Sebelum
+        </a>
+
+        <!-- Restart -->
+        <button onclick="location.reload()"
+            style="padding: 10px 18px; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border: none; cursor: pointer; background: #FFD93D; color: var(--dark); border-radius: 50px; font-weight: 800; display: flex; align-items: center; gap: 6px; transition: transform 0.2s;"
+            onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <i class="bi bi-arrow-clockwise"></i> Mula Semula
+        </button>
+
+        <!-- Next Game -->
+        
+    </div>
+
+    <div id="flash"></div>
+
+    <div id="success-banner">
+        🎉 Hebat! Kamera sudah bersedia untuk ambil gambar! 🎉
+    </div>
+
+    <header>
+        <h1>📷 Masa <span>Kamera!</span></h1>
+        <p>Tarik komponen yang betul ke dalam kamera untuk menghidupkannya!</p>
+    </header>
+
+    <!-- STATUS PILLS -->
+    <div id="status-bar">
+        <div class="status-pill missing" id="pill-sd">
+            <div class="dot"></div> Kad SD
+        </div>
+        <div class="status-pill missing" id="pill-bat">
+            <div class="dot"></div> Bateri
+        </div>
+    </div>    <!-- MAIN -->
+    <div id="main">
+
+        <!-- LEFT: CAMERA + VIEWFINDER + SNAP -->
+        <div id="camera-zone">
+
+            <!-- CAMERA SVG with drop slots -->
+            <div id="camera-wrap">
+                <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Camera body -->
+                    <rect x="10" y="50" width="280" height="160" rx="22" fill="#2C3E50" />
+                    <rect x="10" y="50" width="280" height="160" rx="22" fill="url(#bodyGrad)" opacity=".6" />
+                    <!-- Top hump (grip) -->
+                    <rect x="190" y="20" width="90" height="50" rx="14" fill="#2C3E50" />
+                    <rect x="190" y="20" width="90" height="50" rx="14" fill="url(#bodyGrad)" opacity=".4" />
+                    <!-- Shutter button -->
+                    <circle cx="235" cy="30" r="14" fill="#E74C3C" />
+                    <circle cx="235" cy="30" r="10" fill="#FF6B6B" />
+                    <circle cx="232" cy="27" r="3" fill="rgba(255,255,255,.4)" />
+                    <!-- Lens barrel -->
+                    <circle cx="110" cy="135" r="68" fill="#1a252f" />
+                    <circle cx="110" cy="135" r="62" fill="#0d1b2a" />
+                    <circle cx="110" cy="135" r="52" fill="#1a252f" />
+                    <circle cx="110" cy="135" r="44" fill="#0a1628" />
+                    <circle cx="110" cy="135" r="35" fill="#122040" />
+                    <circle cx="110" cy="135" r="28" fill="#0a0f1a" />
+                    <!-- Lens shine -->
+                    <ellipse cx="98" cy="122" rx="10" ry="7" fill="rgba(100,180,255,.18)"
+                        transform="rotate(-30,98,122)" />
+                    <ellipse cx="103" cy="118" rx="4" ry="3" fill="rgba(255,255,255,.22)"
+                        transform="rotate(-30,103,118)" />
+                    <!-- Lens ring marks -->
+                    <circle cx="110" cy="135" r="56" fill="none" stroke="#2C3E50" stroke-width="2"
+                        stroke-dasharray="4 8" />
+                    <!-- Flash -->
+                    <rect x="195" y="58" width="36" height="22" rx="6" fill="#F1C40F" />
+                    <rect x="197" y="60" width="32" height="18" rx="5" fill="#F9E04B" />
+                    <rect x="204" y="64" width="18" height="10" rx="3" fill="rgba(255,255,255,.6)" />
+                    <!-- Mode dial -->
+                    <circle cx="268" cy="75" r="12" fill="#34495E" />
+                    <circle cx="268" cy="75" r="9" fill="#2C3E50" />
+                    <line x1="268" y1="66" x2="268" y2="70" stroke="#F1C40F" stroke-width="2" stroke-linecap="round" />
+                    <!-- Hot shoe -->
+                    <rect x="50" y="46" width="60" height="8" rx="3" fill="#34495E" />
+                    <!-- Viewfinder bump -->
+                    <rect x="52" y="32" width="40" height="24" rx="6" fill="#2C3E50" />
+                    <rect x="56" y="36" width="32" height="16" rx="4" fill="#1a252f" />
+                    <!-- Brand text -->
+                    <text x="180" y="175" font-family="'Nunito',sans-serif" font-size="11" font-weight="900"
+                        fill="rgba(255,255,255,.25)" letter-spacing="2">SNAPKID</text>
+                    <!-- SD card slot label -->
+                    <rect x="272" y="110" width="28" height="72" rx="5" fill="rgba(0,0,0,.35)" />
+                    <text x="286" y="152" font-family="'Nunito',sans-serif" font-size="7" fill="rgba(255,255,255,.4)"
+                        text-anchor="middle" transform="rotate(90,286,152)">SD</text>
+                    <!-- Battery slot label -->
+                    <rect x="80" y="200" width="140" height="18" rx="5" fill="rgba(0,0,0,.4)" />
+                    <text x="150" y="213" font-family="'Nunito',sans-serif" font-size="8" fill="rgba(255,255,255,.4)"
+                        text-anchor="middle">BATTERY</text>
+                    <!-- Grip texture -->
+                    <rect x="10" y="50" width="28" height="160" rx="14 0 0 14" fill="rgba(0,0,0,.2)" />
+                    <line x1="24" y1="80" x2="24" y2="190" stroke="rgba(255,255,255,.06)" stroke-width="2"
+                        stroke-dasharray="3 5" />
+                    <!-- Strap lug left -->
+                    <rect x="10" y="80" width="8" height="24" rx="3" fill="#1a252f" />
+                    <!-- Strap lug right -->
+                    <rect x="282" y="80" width="8" height="24" rx="3" fill="#1a252f" />
+                    <defs>
+                        <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="rgba(255,255,255,.12)" />
+                            <stop offset="100%" stop-color="rgba(0,0,0,.12)" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+
+                <!-- Slots merged seamlessly into the camera wrapper -->
+            </div>
+
+            <!-- VIEWFINDER / PREVIEW SCREEN -->
+            <div id="viewfinder">
+                <div id="vf-idle">
+                    <div class="vf-icon">😴</div>
+                    <p>Masukkan barang yang betul<br>untuk menghidupkan kamera!</p>
+                </div>
+                <div id="vf-crosshair">
+                    <div class="vf-grid"></div>
+                    <div class="vf-corner tl"></div>
+                    <div class="vf-corner tr"></div>
+                    <div class="vf-corner bl"></div>
+                    <div class="vf-corner br"></div>
+                    <div class="vf-reticle"></div>
+                    <div id="vf-info">
+                        <span id="vf-mode">AUTO</span>
+                        <span id="vf-count">📸 0</span>
+                        <span>ISO 200</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SNAP BUTTON -->
+            <button id="snap-btn" disabled>📸 Ambil Gambar!</button>
+
+            <!-- PHOTO STRIP -->
+            <div id="photo-strip"></div>
+
+        </div><!-- /camera-zone -->
+
+        <!-- RIGHT: ITEMS TRAY -->
+        <div id="items-tray">
+            <h2>🎒 Barang — Pilih yang betul!</h2>
+            <div class="items-grid" id="mixed-items">
+                <div class="item" data-type="sd" data-label="Kad SD" data-emoji="💾" draggable="true" id="item-sd">
+                    <div class="item-art">💾</div>
+                    <div class="item-name">Kad SD</div>
+                </div>
+                <div class="item" data-type="battery" data-label="Bateri" data-emoji="🔋" draggable="true"
+                    id="item-battery">
+                    <div class="item-art">🔋</div>
+                    <div class="item-name">Bateri</div>
+                </div>
+                <div class="item" data-type="decoy" data-label="Pisang" draggable="true">
+                    <div class="item-art">🍌</div>
+                    <div class="item-name">Pisang</div>
+                </div>
+                <div class="item" data-type="decoy" data-label="Pensil" draggable="true">
+                    <div class="item-art">✏️</div>
+                    <div class="item-name">Pensil</div>
+                </div>
+                <div class="item" data-type="decoy" data-label="Stoking" draggable="true">
+                    <div class="item-art">🧦</div>
+                    <div class="item-name">Stoking</div>
+                </div>
+                <div class="item" data-type="decoy" data-label="Biskut" draggable="true">
+                    <div class="item-art">🍪</div>
+                    <div class="item-name">Biskut</div>
+                </div>
+                <div class="item" data-type="decoy" data-label="Kaktus" draggable="true">
+                    <div class="item-art">🌵</div>
+                    <div class="item-name">Kaktus</div>
+                </div>
+                <div class="item" data-type="decoy" data-label="Itik Mainan" draggable="true">
+                    <div class="item-art">🦆</div>
+                    <div class="item-name">Itik Mainan</div>
+                </div>
+                <div class="item" data-type="decoy" data-label="Kabel USB" draggable="true">
+                    <div class="item-art">🔌</div>
+                    <div class="item-name">Kabel USB</div>
+                </div>
+                <div class="item" data-type="decoy" data-label="Penutup Lensa" draggable="true">
+                    <div class="item-art">🎭</div>
+                    <div class="item-name">Penutup Lensa</div>
+                </div>
+                <div class="item" data-type="decoy" data-label="Aiskrim" draggable="true">
+                    <div class="item-art">🍦</div>
+                    <div class="item-name">Aiskrim</div>
+                </div>
+                <div class="item" data-type="decoy" data-label="Katak" draggable="true">
+                    <div class="item-art">🐸</div>
+                    <div class="item-name">Katak</div>
+                </div>
+            </div>
+        </div><!-- /items-tray -->
+
+    </div><!-- /main -->
+
+    <!-- GHOST ELEMENT (follows cursor during drag) -->
+    <div id="ghost">
+        <div class="item-art" id="ghost-art"></div>
+        <div class="item-name" id="ghost-name"></div>
+    </div>
+
+    <script>
+        // ══════════════════════════════════════════
+        //  STATE
+        // ══════════════════════════════════════════
+        const state = { sd: false, battery: false, photos: 0 };
+        let dragData = null;  // { type, label, emoji, sourceEl }
+        let dragEl = null;
+        let ghostEl = document.getElementById('ghost');
+
+        // ══════════════════════════════════════════
+        //  DRAG — mouse based (works for touch too)
+        // ══════════════════════════════════════════
+        function initDrag() {
+            document.querySelectorAll('.item').forEach(el => {
+                el.addEventListener('mousedown', startDrag);
+                el.addEventListener('touchstart', startDragTouch, { passive: false });
+            });
+        }
+
+        function startDrag(e) {
+            if (e.button !== 0) return;
+            const el = e.currentTarget;
+            beginDrag(el, e.clientX, e.clientY);
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', endDrag);
+        }
+
+        function startDragTouch(e) {
+            e.preventDefault();
+            const el = e.currentTarget;
+            const t = e.touches[0];
+            beginDrag(el, t.clientX, t.clientY);
+            document.addEventListener('touchmove', onDragTouch, { passive: false });
+            document.addEventListener('touchend', endDragTouch);
+        }
+
+        function beginDrag(el, cx, cy) {
+            dragData = {
+                type: el.dataset.type,
+                label: el.dataset.label,
+                emoji: el.dataset.emoji || el.querySelector('.item-art').textContent,
+                sourceEl: el
+            };
+            el.classList.add('dragging');
+
+            ghostEl.querySelector('#ghost-art').textContent = dragData.emoji;
+            ghostEl.querySelector('#ghost-name').textContent = dragData.label;
+            ghostEl.style.left = cx + 'px';
+            ghostEl.style.top = cy + 'px';
+            ghostEl.classList.add('show');
+
+            // highlight camera if an eligible item is grabbed
+            if (dragData.type === 'sd' || dragData.type === 'battery') {
+                if (!state[dragData.type]) {
+                    document.getElementById('camera-wrap').classList.add('highlight');
+                    document.getElementById('viewfinder').classList.add('highlight');
+                }
+            }
+        }
+
+        function onDrag(e) {
+            moveGhost(e.clientX, e.clientY);
+        }
+        function onDragTouch(e) {
+            e.preventDefault();
+            moveGhost(e.touches[0].clientX, e.touches[0].clientY);
+        }
+        function moveGhost(cx, cy) {
+            ghostEl.style.left = cx + 'px';
+            ghostEl.style.top = cy + 'px';
+        }
+
+        function endDrag(e) {
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', endDrag);
+            finishDrop(e.clientX, e.clientY);
+        }
+        function endDragTouch(e) {
+            document.removeEventListener('touchmove', onDragTouch);
+            document.removeEventListener('touchend', endDragTouch);
+            const t = e.changedTouches[0];
+            finishDrop(t.clientX, t.clientY);
+        }
+
+        function finishDrop(cx, cy) {
+            ghostEl.classList.remove('show');
+            document.getElementById('camera-wrap').classList.remove('highlight');
+            document.getElementById('viewfinder').classList.remove('highlight');
+
+            if (!dragData) return;
+
+            // find component under cursor
+            ghostEl.style.display = 'none';
+            const hit = document.elementFromPoint(cx, cy);
+            ghostEl.style.display = '';
+
+            const cameraHit = hit?.closest('#camera-wrap') || hit?.closest('#viewfinder');
+
+            if (cameraHit) {
+                if (dragData.type === 'sd' || dragData.type === 'battery') {
+                    const isUsed = state[dragData.type];
+                    if (!isUsed) {
+                        // ✅ correct!
+                        placeItemInCamera(dragData);
+                    } else {
+                        // ❌ wrong drop (already inserted)
+                        wrongDropCamera();
+                    }
+                } else {
+                    // ❌ wrong drop (invalid decoy item)
+                    wrongDropCamera();
+                }
+            }
+
+            dragData.sourceEl.classList.remove('dragging');
+            dragData = null;
+        }
+
+        // ══════════════════════════════════════════
+        //  CAMERA INTERACTIONS
+        // ══════════════════════════════════════════
+        function placeItemInCamera(data) {
+            data.sourceEl.classList.add('used');
+
+            // Flash the camera to indicate success!
+            const flash = document.getElementById('flash');
+            flash.classList.add('on');
+            setTimeout(() => flash.classList.remove('on'), 160);
+
+            if (window.playShutter) playShutter(); // audio cue
+
+            const camWrap = document.getElementById('camera-wrap');
+            showHint(camWrap, `✅ ${data.label} Dimasukkan!`, 'left');
+
+            // update state
+            if (data.type === 'sd') { state.sd = true; updatePill('pill-sd', true); }
+            if (data.type === 'battery') { state.battery = true; updatePill('pill-bat', true); }
+
+            checkReady();
+        }
+
+        function wrongDropCamera() {
+            const camWrap = document.getElementById('camera-wrap');
+            camWrap.classList.add('wrong-drop');
+            showHint(camWrap, '❌ Tidak Sesuai!', 'left');
+            setTimeout(() => camWrap.classList.remove('wrong-drop'), 500);
+        }
+
+        function showHint(el, text, side = 'top') {
+            const old = el.querySelector('.hint-bubble');
+            if (old) old.remove();
+            const b = document.createElement('div');
+            b.className = 'hint-bubble';
+            b.textContent = text;
+            
+            if (side === 'left') {
+                b.style.top = '50%';
+                b.style.right = 'calc(100% + 15px)';
+                b.style.left = 'auto';
+                b.style.transform = 'translateY(-50%)';
+            } else {
+                b.style.top = '-30px';
+                b.style.left = '50%';
+                b.style.transform = 'translateX(-50%)';
+            }
+            
+            el.style.position = 'relative';
+            el.appendChild(b);
+            setTimeout(() => b.remove(), 1800);
+        }
+
+        function updatePill(id, ready) {
+            const p = document.getElementById(id);
+            if (!p) return;
+            p.classList.toggle('ready', ready);
+            p.classList.toggle('missing', !ready);
+        }
+
+        // ══════════════════════════════════════════
+        //  CAMERA READY
+        // ══════════════════════════════════════════
+        function checkReady() {
+            if (state.sd && state.battery) {
+                activateCamera();
+            }
+        }
+
+        function activateCamera() {
+            // Switch viewfinder
+            document.getElementById('vf-idle').style.display = 'none';
+            document.getElementById('vf-crosshair').classList.add('active');
+            document.getElementById('snap-btn').disabled = false;
+
+            // Celebrate briefly
+            setTimeout(() => {
+                const banner = document.getElementById('success-banner');
+                banner.textContent = '🎉 Kamera dihidupkan! Tekan butang untuk ambil gambar! 🎉';
+                banner.classList.add('show');
+                spawnConfetti();
+                setTimeout(() => banner.classList.remove('show'), 3500);
+            }, 400);
+        }
+
+        // ══════════════════════════════════════════
+        //  SNAP PHOTO
+        // ══════════════════════════════════════════
+        document.getElementById('snap-btn').addEventListener('click', snapPhoto);
+
+        function snapPhoto() {
+            if (!state.sd || !state.battery) return;
+
+            // Flash
+            const flash = document.getElementById('flash');
+            flash.classList.add('on');
+            setTimeout(() => flash.classList.remove('on'), 160);
+
+            state.photos++;
+            document.getElementById('vf-count').textContent = `📸 ${state.photos}`;
+
+            // Generate a little photo thumbnail
+            const strip = document.getElementById('photo-strip');
+            const thumb = document.createElement('div');
+            thumb.className = 'photo-thumb';
+            const c = document.createElement('canvas');
+            c.width = 160;
+            c.height = 120;
+            drawFakePhoto(c);
+            thumb.appendChild(c);
+            strip.prepend(thumb);
+
+            // keep max 6 photos
+            while (strip.children.length > 6) strip.lastChild.remove();
+
+            // Shutter sound (Web Audio)
+            playShutter();
+        }
+
+        function drawFakePhoto(canvas) {
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width, H = canvas.height;
+            const hues = [210, 150, 280, 40, 0, 180];
+            const hue = hues[Math.floor(Math.random() * hues.length)];
+
+            // sky gradient
+            const grad = ctx.createLinearGradient(0, 0, 0, H);
+            grad.addColorStop(0, `hsl(${hue},60%,72%)`);
+            grad.addColorStop(1, `hsl(${hue + 30},50%,45%)`);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+
+            // ground
+            ctx.fillStyle = `hsl(${hue + 60},40%,35%)`;
+            ctx.fillRect(0, H * .65, W, H);
+
+            // random circles (subjects)
+            for (let i = 0; i < 4; i++) {
+                ctx.beginPath();
+                ctx.arc(
+                    20 + Math.random() * (W - 40),
+                    20 + Math.random() * (H * .7 - 20),
+                    8 + Math.random() * 22, 0, Math.PI * 2
+                );
+                ctx.fillStyle = `hsla(${Math.random() * 360},70%,65%,.85)`;
+                ctx.fill();
+            }
+
+            // vignette
+            const vig = ctx.createRadialGradient(W / 2, H / 2, H * .2, W / 2, H / 2, H * .8);
+            vig.addColorStop(0, 'rgba(0,0,0,0)');
+            vig.addColorStop(1, 'rgba(0,0,0,.35)');
+            ctx.fillStyle = vig;
+            ctx.fillRect(0, 0, W, H);
+
+            // timestamp
+            ctx.fillStyle = 'rgba(255,255,255,.65)';
+            ctx.font = 'bold 9px monospace';
+            ctx.fillText(new Date().toLocaleTimeString(), 6, H - 6);
+        }
+
+        function playShutter() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                // click
+                const buf = ctx.createBuffer(1, ctx.sampleRate * .06, ctx.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / 800);
+                const src = ctx.createBufferSource();
+                src.buffer = buf;
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(.6, ctx.currentTime);
+                src.connect(gain); gain.connect(ctx.destination);
+                src.start();
+            } catch (e) { }
+        }
+
+        // ══════════════════════════════════════════
+        //  CONFETTI
+        // ══════════════════════════════════════════
+        function spawnConfetti() {
+            const colors = ['#FFD93D', '#FF6B35', '#2ED573', '#3498DB', '#FF4757', '#9B59B6', '#1ABC9C'];
+            for (let i = 0; i < 60; i++) {
+                const el = document.createElement('div');
+                el.className = 'confetti-piece';
+                el.style.cssText = `
+      left:${10 + Math.random() * 80}%;
+      background:${colors[i % colors.length]};
+      border-radius:${Math.random() > .5 ? '50%' : '2px'};
+      animation-duration:${1.2 + Math.random() * .8}s;
+      animation-delay:${Math.random() * .4}s;
+      width:${8 + Math.random() * 10}px;
+      height:${8 + Math.random() * 10}px;
+    `;
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 2500);
+            }
+        }
+
+        // ══════════════════════════════════════════
+        //  CAMERA hover via pointer events
+        // ══════════════════════════════════════════
+        const camWrap = document.getElementById('camera-wrap');
+        camWrap.addEventListener('mouseenter', () => {
+            if (dragData && (dragData.type === 'sd' || dragData.type === 'battery')) {
+                if (!state[dragData.type]) camWrap.classList.add('highlight');
+            }
+        });
+        camWrap.addEventListener('mouseleave', () => {
+            camWrap.classList.remove('highlight');
+        });
+
+        // ══════════════════════════════════════════
+        //  INIT
+        // ══════════════════════════════════════════
+        function shuffleItems() {
+            const grid = document.getElementById('mixed-items');
+            if (!grid) return;
+            for (let i = grid.children.length; i >= 0; i--) {
+                grid.appendChild(grid.children[Math.random() * i | 0]);
+            }
+        }
+        shuffleItems();
+        initDrag();
+    </script>
+</body>
+
+</html>
